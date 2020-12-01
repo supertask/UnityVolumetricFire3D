@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 902aa0318c33f26438aec8626b688694
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - simulator: {instanceID: 0}
+  - material: {fileID: 2100000, guid: 2006b3393d311dc49ab782b940924419, type: 2}
+  - blueNoise: {fileID: 2800000, guid: ad46299e02759574289bc472f234dd18, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

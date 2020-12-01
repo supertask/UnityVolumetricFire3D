@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: FireRayCast
+  m_Shader: {fileID: 4800000, guid: ce7e14398ee00d84193a82fb0174f3f6, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _FireGradient:
+        m_Texture: {fileID: 8400000, guid: 7001b7f3e1d9da346add9ef9d70514bb, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SmokeGradient:
+        m_Texture: {fileID: 8400000, guid: ddd73e516e4ba4d448a2524840aac3d0, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _DarknessThreshold: 0.15
+    - _FireAbsorption: 60
+    - _LightAbsorptionThroughCloud: 0.75
+    - _LightAbsorptionTowardSun: 1.21
+    - _SmokeAbsorption: 40
+    m_Colors:
+    - _SmokeColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
