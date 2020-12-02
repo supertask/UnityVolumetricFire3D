@@ -8,9 +8,10 @@ Shader "3DFluidSim/FireRayCast"
 	Properties
 	{
 		_FireGradient("FireGradient", 2D) = "red" {}
-		_SmokeColor("SmokeGradient", Color) = (0,0,0,1)
-		_SmokeAbsorption("SmokeAbsorbtion", float) = 60.0
-		_FireAbsorption("FireAbsorbtion", float) = 40.0
+		_SmokeGradient("SmokeGradient", 2D) = "white" {}
+		//_SmokeColor("SmokeGradient", Color) = (0,0,0,1)
+		//_SmokeAbsorption("SmokeAbsorbtion", float) = 60.0
+		//_FireAbsorption("FireAbsorbtion", float) = 40.0
 	}
 	SubShader 
 	{
@@ -31,7 +32,7 @@ Shader "3DFluidSim/FireRayCast"
 			#define NUM_SAMPLES 64
 			
 			sampler2D _FireGradient;
-			float4 _SmokeColor;
+			sampler2D _SmokeGradient;
 			float _SmokeAbsorption, _FireAbsorption;
 			uniform float3 _Translate, _Scale, _Size;
 			
@@ -158,7 +159,7 @@ Shader "3DFluidSim/FireRayCast"
         			if(fireAlpha <= 0.01 && smokeAlpha <= 0.01) break;
 			    }
 			    
-			    float4 smoke = _SmokeColor * (1.0-smokeAlpha);
+			    float4 smoke = tex2D(_SmokeGradient, float2(smokeAlpha,0)) * (1.0-smokeAlpha);
 			    
 			    float4 fire = tex2D(_FireGradient, float2(fireAlpha,0)) * (1.0-fireAlpha);
 			    

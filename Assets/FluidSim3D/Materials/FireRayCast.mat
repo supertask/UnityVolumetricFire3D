@@ -20,7 +20,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _FireGradient:
-        m_Texture: {fileID: 2800000, guid: ac2c4961e13090042b382bb1c186bc31, type: 3}
+        m_Texture: {fileID: 8400000, guid: 6c593ae1096adfd46b73e8cbc4821089, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SmokeGradient:
+        m_Texture: {fileID: 8400000, guid: 21c908ee3e341d74f9b6fadddb195389, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
