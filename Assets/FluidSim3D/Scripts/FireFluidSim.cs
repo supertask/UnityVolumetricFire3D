@@ -3,10 +3,8 @@ using System.Collections;
 
 namespace FluidSim3DProject
 {
-	public class FireFluidSim : MonoBehaviour 
+	public class FireFluidSim : MonoBehaviour
 	{
-		public Volumetric volumetric;
-
 		//DONT CHANGE THESE
 		const int READ = 0;
 		const int WRITE = 1;
@@ -47,12 +45,12 @@ namespace FluidSim3DProject
 		public ComputeShader m_applyImpulse, m_applyAdvect, m_computeVorticity;
 		public ComputeShader m_computeDivergence, m_computeJacobi, m_computeProjection;
 		public ComputeShader m_computeConfinement, m_computeObstacles, m_applyBuoyancy;
-
+		
 		Vector4 m_size;
 		ComputeBuffer[] m_density, m_velocity, m_pressure, m_temperature, m_phi, m_reaction;
 		ComputeBuffer m_temp3f, m_obstacles;
 
-		void Start () 
+		public void Init() 
 		{
 			//Dimension sizes must be pow2 numbers
 			m_width = Mathf.ClosestPowerOfTwo(m_width);
@@ -110,7 +108,7 @@ namespace FluidSim3DProject
 		
 		void ComputeObstacles()
 		{
-			m_computeObstacles.SetVector("_VoxelSize", m_size);
+			m_computeObstacles.SetVector("_Size", m_size);
 			m_computeObstacles.SetBuffer(0, "_Write", m_obstacles);
 			m_computeObstacles.Dispatch(0, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
 			
@@ -118,7 +116,7 @@ namespace FluidSim3DProject
 		
 		void ApplyImpulse(float dt, float amount, ComputeBuffer[] buffer)
 		{
-			m_applyImpulse.SetVector("_VoxelSize", m_size);
+			m_applyImpulse.SetVector("_Size", m_size);
 			m_applyImpulse.SetFloat("_Radius", m_inputRadius);
 			m_applyImpulse.SetFloat("_Amount", amount);
 			m_applyImpulse.SetFloat("_DeltaTime", dt);
@@ -134,7 +132,7 @@ namespace FluidSim3DProject
 		
 		void ApplyExtinguishmentImpulse(float dt, float amount, ComputeBuffer[] buffer)
 		{
-			m_applyImpulse.SetVector("_VoxelSize", m_size);
+			m_applyImpulse.SetVector("_Size", m_size);
 			m_applyImpulse.SetFloat("_Radius", m_inputRadius);
 			m_applyImpulse.SetFloat("_Amount", amount);
 			m_applyImpulse.SetFloat("_DeltaTime", dt);
@@ -152,7 +150,7 @@ namespace FluidSim3DProject
 		
 		void ApplyBuoyancy(float dt)
 		{
-			m_applyBuoyancy.SetVector("_VoxelSize", m_size);
+			m_applyBuoyancy.SetVector("_Size", m_size);
 			m_applyBuoyancy.SetVector("_Up", new Vector4(0,1,0,0));
 			m_applyBuoyancy.SetFloat("_Buoyancy", m_densityBuoyancy);
 			m_applyBuoyancy.SetFloat("_AmbientTemperature", m_ambientTemperature);
@@ -171,7 +169,7 @@ namespace FluidSim3DProject
 		
 		void ApplyAdvection(float dt, float dissipation, float decay, ComputeBuffer[] buffer, float forward = 1.0f)
 		{
-			m_applyAdvect.SetVector("_VoxelSize", m_size);
+			m_applyAdvect.SetVector("_Size", m_size);
 			m_applyAdvect.SetFloat("_DeltaTime", dt);
 			m_applyAdvect.SetFloat("_Dissipate", dissipation);
 			m_applyAdvect.SetFloat("_Forward", forward);
@@ -189,7 +187,7 @@ namespace FluidSim3DProject
 		
 		void ApplyAdvection(float dt, float dissipation, float decay, ComputeBuffer read, ComputeBuffer write, float forward = 1.0f)
 		{
-			m_applyAdvect.SetVector("_VoxelSize", m_size);
+			m_applyAdvect.SetVector("_Size", m_size);
 			m_applyAdvect.SetFloat("_DeltaTime", dt);
 			m_applyAdvect.SetFloat("_Dissipate", dissipation);
 			m_applyAdvect.SetFloat("_Forward", forward);
@@ -205,7 +203,7 @@ namespace FluidSim3DProject
 		
 		void ApplyAdvectionBFECC(float dt, float dissipation, float decay, ComputeBuffer[] buffer)
 		{
-			m_applyAdvect.SetVector("_VoxelSize", m_size);
+			m_applyAdvect.SetVector("_Size", m_size);
 			m_applyAdvect.SetFloat("_DeltaTime", dt);
 			m_applyAdvect.SetFloat("_Dissipate", dissipation);
 			m_applyAdvect.SetFloat("_Forward", 1.0f);
@@ -224,7 +222,7 @@ namespace FluidSim3DProject
 		
 		void ApplyAdvectionMacCormack(float dt, float dissipation, float decay, ComputeBuffer[] buffer)
 		{
-			m_applyAdvect.SetVector("_VoxelSize", m_size);
+			m_applyAdvect.SetVector("_Size", m_size);
 			m_applyAdvect.SetFloat("_DeltaTime", dt);
 			m_applyAdvect.SetFloat("_Dissipate", dissipation);
 			m_applyAdvect.SetFloat("_Forward", 1.0f);
@@ -244,7 +242,7 @@ namespace FluidSim3DProject
 		
 		void ApplyAdvectionVelocity(float dt)
 		{
-			m_applyAdvect.SetVector("_VoxelSize", m_size);
+			m_applyAdvect.SetVector("_Size", m_size);
 			m_applyAdvect.SetFloat("_DeltaTime", dt);
 			m_applyAdvect.SetFloat("_Dissipate", m_velocityDissipation);
 			m_applyAdvect.SetFloat("_Forward", 1.0f);
@@ -262,14 +260,14 @@ namespace FluidSim3DProject
 		
 		void ComputeVorticityConfinement(float dt)
 		{
-			m_computeVorticity.SetVector("_VoxelSize", m_size);
+			m_computeVorticity.SetVector("_Size", m_size);
 			
 			m_computeVorticity.SetBuffer(0, "_Write", m_temp3f);
 			m_computeVorticity.SetBuffer(0, "_Velocity", m_velocity[READ]);
 			
 			m_computeVorticity.Dispatch(0, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
 			
-			m_computeConfinement.SetVector("_VoxelSize", m_size);
+			m_computeConfinement.SetVector("_Size", m_size);
 			m_computeConfinement.SetFloat("_DeltaTime", dt);
 			m_computeConfinement.SetFloat("_Epsilon", m_vorticityStrength);
 			
@@ -284,7 +282,7 @@ namespace FluidSim3DProject
 		
 		void ComputeDivergence()
 		{
-			m_computeDivergence.SetVector("_VoxelSize", m_size);
+			m_computeDivergence.SetVector("_Size", m_size);
 			
 			m_computeDivergence.SetBuffer(0, "_Write", m_temp3f);
 			m_computeDivergence.SetBuffer(0, "_Velocity", m_velocity[READ]);
@@ -295,7 +293,7 @@ namespace FluidSim3DProject
 		
 		void ComputePressure()
 		{
-			m_computeJacobi.SetVector("_VoxelSize", m_size);
+			m_computeJacobi.SetVector("_Size", m_size);
 			m_computeJacobi.SetBuffer(0, "_Divergence", m_temp3f);
 			m_computeJacobi.SetBuffer(0, "_Obstacles", m_obstacles);
 			
@@ -312,7 +310,7 @@ namespace FluidSim3DProject
 		
 		void ComputeProjection()
 		{
-			m_computeProjection.SetVector("_VoxelSize", m_size);
+			m_computeProjection.SetVector("_Size", m_size);
 			m_computeProjection.SetBuffer(0, "_Obstacles", m_obstacles);
 			
 			m_computeProjection.SetBuffer(0, "_Pressure", m_pressure[READ]);
@@ -324,7 +322,7 @@ namespace FluidSim3DProject
 			Swap(m_velocity);
 		}
 		
-		void Update () 
+		public void Simulate() 
 		{
 			
 			float dt = TIME_STEP;
@@ -401,26 +399,9 @@ namespace FluidSim3DProject
 			
 			//Subtract the pressure field from the velocity field enforcing the divergence free conditions
 			ComputeProjection();
-			
-			//rotation of box not support because ray cast in shader uses a AABB intersection
-			transform.rotation = Quaternion.identity;
-			
-			/*
-			GetComponent<Renderer>().material.SetVector("_Translate", transform.localPosition);
-			GetComponent<Renderer>().material.SetVector("_BoundsScale", transform.localScale);
-			GetComponent<Renderer>().material.SetBuffer("_Density", m_density[READ]);
-			GetComponent<Renderer>().material.SetBuffer("_Reaction", m_reaction[READ]);
-			GetComponent<Renderer>().material.SetVector("_VoxelSize", m_size);
-			*/
-
-			this.volumetric.material.SetVector("_Translate", transform.localPosition);
-			this.volumetric.material.SetVector("_BoundsScale", transform.localScale);
-			this.volumetric.material.SetBuffer("_Density", m_density[READ]);
-			this.volumetric.material.SetBuffer("_Reaction", m_reaction[READ]);
-			this.volumetric.material.SetVector("_VoxelSize", m_size);
+		
 		}
 
-/*
 		public ComputeBuffer GetDensity() {
 			return this.m_density[READ];
 		}
@@ -432,9 +413,8 @@ namespace FluidSim3DProject
 		public Vector4 GetComputeSize() {
 			return this.m_size;
 		}
-*/
-
-		void OnDestroy()
+		
+		public void ReleaseAll()
 		{
 			m_density[READ].Release();	
 			m_density[WRITE].Release();

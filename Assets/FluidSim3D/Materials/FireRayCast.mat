@@ -20,19 +20,12 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _FireGradient:
-        m_Texture: {fileID: 8400000, guid: 7001b7f3e1d9da346add9ef9d70514bb, type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SmokeGradient:
-        m_Texture: {fileID: 8400000, guid: ddd73e516e4ba4d448a2524840aac3d0, type: 2}
+        m_Texture: {fileID: 2800000, guid: ac2c4961e13090042b382bb1c186bc31, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _DarknessThreshold: 0.15
-    - _FireAbsorption: 60
-    - _LightAbsorptionThroughCloud: 0.75
-    - _LightAbsorptionTowardSun: 1.21
-    - _SmokeAbsorption: 40
+    - _FireAbsorption: 30
+    - _SmokeAbsorption: 60
     m_Colors:
     - _SmokeColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
