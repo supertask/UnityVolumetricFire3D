@@ -51,6 +51,7 @@ namespace FluidSim3DProject
 			material.SetFloat("_LightAbsorptionTowardSun", lightAbsorptionTowardSun);
 			material.SetFloat("_LightAbsorptionThroughCloud", lightAbsorptionThroughCloud);
 			material.SetFloat("_DarknessThreshold", darknessThreshold);
+			//Debug.Log("_LightAbsorptionThroughCloud: " + lightAbsorptionThroughCloud);
 
 
             //
@@ -59,8 +60,10 @@ namespace FluidSim3DProject
 			//rotation of box not support because ray cast in shader uses a AABB intersection
 			boundingBoxTransform.rotation = Quaternion.identity;
 			
-			material.SetVector("_Translate", boundingBoxTransform.localPosition);
-			material.SetVector("_Scale", boundingBoxTransform.localScale);
+			//Debug.Log("_BoundingPosition: " + boundingBoxTransform.localPosition);
+			//Debug.Log("_BoundingScale: " + boundingBoxTransform.localScale);
+			material.SetVector("_BoundingPosition", boundingBoxTransform.localPosition);
+			material.SetVector("_BoundingScale", boundingBoxTransform.localScale);
 			material.SetBuffer("_Density", this.simulator.GetDensity());
 			material.SetBuffer("_Reaction", this.simulator.GetReaction());
 			material.SetVector("_Size", this.simulator.GetComputeSize());

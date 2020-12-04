@@ -29,14 +29,6 @@ Shader "3DFluidSim/FireRayCast"
 			#pragma vertex vert
 			#pragma fragment frag
 			
-			#define NUM_SAMPLES 64
-			
-			sampler2D _FireGradient;
-			sampler2D _SmokeGradient;
-			float _SmokeAbsorption, _FireAbsorption;
-			uniform float3 _Translate, _Scale, _Size;
-			
-			StructuredBuffer<float> _Density, _Reaction;
 		
 			struct v2f 
 			{
@@ -52,22 +44,93 @@ Shader "3DFluidSim/FireRayCast"
     			return OUT;
 			}
 			
+			#define RAY_STEPS_TO_FLUID 64
+			#define RAY_STEPS_TO_LIGHT 8
+
 			struct Ray {
 				float3 origin;
 				float3 dir;
 			};
 			
-			struct AABB {
+			struct BoundingBox {
 			    float3 Min;
 			    float3 Max;
 			};
+
+			//
+			// Fire & smoke settings
+			//
+			sampler2D _FireGradient;
+			sampler2D _SmokeGradient;
+			float _SmokeAbsorption, _FireAbsorption; //absorption = 吸収
+			uniform float3 _BoundingPosition, _BoundingScale, _Size;
+			StructuredBuffer<float> _Density, _Reaction;
+			float3 boundsMax;
+			float3 boundsMin;
+
+			//Textures
+            Texture2D<float4> BlueNoise;
+			SamplerState samplerBlueNoise;
+			
+			//Unity provided
+			sampler2D _CameraDepthTexture;
+
+			// Marching settings
+			float _RayOffsetStrength;
+
+			// Shape settings
+			float4 _PhaseParams;
+
+			// Light settings
+            float _LightAbsorptionTowardSun;
+            float _LightAbsorptionThroughCloud;
+			float _DarknessThreshold;
+            float4 _LightColor0;
+			
+			// Henyey-Greenstein
+            float hg(float a, float g) {
+                float g2 = g*g;
+                return (1-g2) / (4*3.1415*pow(1+g2-2*g*(a), 1.5));
+            }
+
+            float phase(float a) {
+                float blend = .5;
+                float hgBlend = hg(a,_PhaseParams.x) * (1-blend) + hg(a,-_PhaseParams.y) * blend;
+                return _PhaseParams.z + hgBlend*_PhaseParams.w;
+            }
+
+			float2 squareUV(float2 uv) {
+                float width = _ScreenParams.x;
+                float height =_ScreenParams.y;
+                //float minDim = min(width, height);
+                float scale = 1000;
+                float x = uv.x * width;
+                float y = uv.y * height;
+                return float2 (x/scale, y/scale);
+            }
+
+
+			float2 rayBoundsDistance(Ray ray, BoundingBox boundingBox)
+			{
+			    float3 inverseRayDir = 1.0 / ray.dir;
+			    float3 tbot = inverseRayDir * (boundingBox.Min-ray.origin);
+			    float3 ttop = inverseRayDir * (boundingBox.Max-ray.origin);
+			    float3 tmin = min(ttop, tbot);
+			    float3 tmax = max(ttop, tbot);
+			    float2 t = max(tmin.xx, tmin.yz);
+			    float distanceIntersectedToNearBounds = max(t.x, t.y);
+			    t = min(tmax.xx, tmax.yz);
+			    float distanceIntersectedToFarBounds = min(t.x, t.y);
+
+                return float2(distanceIntersectedToNearBounds, distanceIntersectedToFarBounds);
+			}
 			
 			//find intersection points of a ray with a box
-			bool intersectBox(Ray r, AABB aabb, out float t0, out float t1)
+			bool intersectBox(Ray ray, BoundingBox boundingBox, out float t0, out float t1)
 			{
-			    float3 invR = 1.0 / r.dir;
-			    float3 tbot = invR * (aabb.Min-r.origin);
-			    float3 ttop = invR * (aabb.Max-r.origin);
+			    float3 invR = 1.0 / ray.dir;
+			    float3 tbot = invR * (boundingBox.Min-ray.origin);
+			    float3 ttop = invR * (boundingBox.Max-ray.origin);
 			    float3 tmin = min(ttop, tbot);
 			    float3 tmax = max(ttop, tbot);
 			    float2 t = max(tmin.xx, tmin.yz);
@@ -76,22 +139,23 @@ Shader "3DFluidSim/FireRayCast"
 			    t1 = min(t.x, t.y);
 			    return t0 <= t1;
 			}
+
 			
-			float SampleBilinear(StructuredBuffer<float> buffer, float3 uv, float3 size)
+			float SampleBilinear(StructuredBuffer<float> buffer, float3 uvw, float3 size)
 			{
-				uv = saturate(uv);
-				uv = uv * (size-1.0);
+				uvw = saturate(uvw);
+				uvw = uvw * (size-1.0);
 			
-				int x = uv.x;
-				int y = uv.y;
-				int z = uv.z;
+				int x = uvw.x;
+				int y = uvw.y;
+				int z = uvw.z;
 				
 				int X = size.x;
 				int XY = size.x*size.y;
 				
-				float fx = uv.x-x;
-				float fy = uv.y-y;
-				float fz = uv.z-z;
+				float fx = uvw.x-x;
+				float fy = uvw.y-y;
+				float fz = uvw.z-z;
 				
 				int xp1 = min(_Size.x-1, x+1);
 				int yp1 = min(_Size.y-1, y+1);
@@ -110,60 +174,100 @@ Shader "3DFluidSim/FireRayCast"
 				
 			}
 
+			// Calculate proportion of light that reaches the given point from the lightsource
+			//
+			// rayPosFromCamera:
+			//     ray marching position from eye to clouds
+			//     rayPosFromCamera near equeals a cloud particle position
+			//
+            float lightmarch(float3 rayPosFromCamera, BoundingBox boundingBox) {
+                float3 dirToLight = _WorldSpaceLightPos0.xyz;
+                //float dstInsideBox = rayBoxDst(boundsMin, boundsMax, rayPosFromCamera, 1/dirToLight).y;
+				Ray rayTowardsLight; //Ray from cloud particle position to light position.
+				rayTowardsLight.origin = rayPosFromCamera;
+				rayTowardsLight.dir = dirToLight;
+				float2 distanceIntersectedToFarBounds = rayBoundsDistance(rayTowardsLight, boundingBox).y; //Confirmed!!!
+                
+                float stepSize = distanceIntersectedToFarBounds/RAY_STEPS_TO_LIGHT;
+                float totalDensity = 0;
+
+				float rayPosForLight = rayPosFromCamera;
+                for (int step = 0; step < RAY_STEPS_TO_LIGHT; step ++) {
+                    rayPosForLight += rayTowardsLight.dir * stepSize;
+					//float density = sampleDensity(rayPosForLight, boundingBox);
+					float density = SampleBilinear(_Density, rayPosForLight, _Size);
+                    totalDensity += max(0, density * stepSize);
+                }
+
+                float transmittance = exp(-totalDensity * _LightAbsorptionTowardSun);
+                return _DarknessThreshold + transmittance * (1-_DarknessThreshold);
+            }
+
 			
 			float4 frag(v2f IN) : COLOR
 			{
-				float3 pos = _WorldSpaceCameraPos;
-			
-				Ray r;
-				r.origin = pos;
-				r.dir = normalize(IN.worldPos-pos);
+				//
+				// IN.worldPos means a world position on each pixel of the bounding box 
+				//
+				Ray ray;
+				ray.origin = _WorldSpaceCameraPos;
+				ray.dir = normalize(IN.worldPos - _WorldSpaceCameraPos);
 				
-				AABB aabb;
-				aabb.Min = float3(-0.5,-0.5,-0.5)*_Scale + _Translate;
-				aabb.Max = float3(0.5,0.5,0.5)*_Scale + _Translate;
+				BoundingBox boundingBox;
+				boundingBox.Min = float3(-0.5,-0.5,-0.5)*_BoundingScale + _BoundingPosition;
+				boundingBox.Max = float3(0.5,0.5,0.5)*_BoundingScale + _BoundingPosition;
 
 				//figure out where ray from eye hit front of cube
 				float tnear, tfar;
-				intersectBox(r, aabb, tnear, tfar);
+				intersectBox(ray, boundingBox, tnear, tfar);
 				
 				//if eye is in cube then start ray at eye
 				if (tnear < 0.0) tnear = 0.0;
 
-				float3 rayStart = r.origin + r.dir * tnear;
-    			float3 rayStop = r.origin + r.dir * tfar;
+				float3 rayStart = ray.origin + ray.dir * tnear; //world position of ray start point
+    			float3 rayStop = ray.origin + ray.dir * tfar;
     			
     			//convert to texture space
-    			rayStart -= _Translate;
-    			rayStop -= _Translate;
-   				rayStart = (rayStart + 0.5*_Scale)/_Scale;
-   				rayStop = (rayStop + 0.5*_Scale)/_Scale;
+    			rayStart -= _BoundingPosition;
+    			rayStop -= _BoundingPosition;
+   				rayStart = (rayStart + 0.5*_BoundingScale)/_BoundingScale;
+   				rayStop = (rayStop + 0.5*_BoundingScale)/_BoundingScale;
   
-				float3 start = rayStart;
+				float3 rayPos = rayStart;
 				float dist = distance(rayStop, rayStart);
-				float stepSize = dist/float(NUM_SAMPLES);
+				float stepSize = dist/float(RAY_STEPS_TO_FLUID);
 			    float3 ds = normalize(rayStop-rayStart) * stepSize;
-			    float fireAlpha = 1.0, smokeAlpha = 1.0;
-			
-   				for(int i=0; i < NUM_SAMPLES; i++, start += ds) 
+	
+
+				float lightEnergy = 0;
+			    float smokeTransmittance = 1.0;
+   				for(int i=0; i < RAY_STEPS_TO_FLUID; i++, rayPos += ds) 
    				{
-   				 
-   					float D = SampleBilinear(_Density, start, _Size);
-   					
-   					float R = SampleBilinear(_Reaction, start, _Size);
+   					float density = SampleBilinear(_Density, rayPos, _Size);
    				 	
-        			fireAlpha *= 1.0-saturate(R*stepSize*_FireAbsorption);
-        			
-        			smokeAlpha *= 1.0-saturate(D*stepSize*_SmokeAbsorption);
-        			
-        			if(fireAlpha <= 0.01 && smokeAlpha <= 0.01) break;
+					if (density > 0) {
+						float lightTransmittance = lightmarch(rayPos, boundingBox);
+                        //lightEnergy += density * smokeTransmittance * lightTransmittance; //Not confirmed.....
+                        lightEnergy += density * smokeTransmittance * lightTransmittance; //Not confirmed.....
+                        smokeTransmittance *= exp(-density * _LightAbsorptionThroughCloud); //Confirmed!!
+						//if not very dense, most light makes it through
+						//if very dense, not much light makes it through
+
+						if(smokeTransmittance <= 0.01) break;
+					}
 			    }
-			    
-			    float4 smoke = tex2D(_SmokeGradient, float2(smokeAlpha,0)) * (1.0-smokeAlpha);
-			    
-			    float4 fire = tex2D(_FireGradient, float2(fireAlpha,0)) * (1.0-fireAlpha);
-			    
-				return fire + smoke;
+
+				//smokeTransmittance = 0;
+				//lightEnergy = 1;
+				float3 smokeCol = float3(0.9,0.9,1) * smokeTransmittance + lightEnergy * _LightColor0; //little bit blue sky , bit light color
+
+				return float4(smokeCol, 1.0);
+
+				//return float4(lightEnergy,0,0,1);
+				//return float4(smokeTransmittance,0,0,1);
+
+
+				///return float4(lightmarch(IN.worldPos, boundingBox), 0,0, 1);
 			}
 			
 			ENDCG
