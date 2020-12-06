@@ -262,7 +262,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   simulator: {fileID: 5626191131645923661}
   blueNoise: {fileID: 2800000, guid: ad46299e02759574289bc472f234dd18, type: 3}
-  rayOffsetStrength: 10
+  rayOffsetStrength: 1
   fireAbsorption: 40
   smokeAbsorption: 60
   lightAbsorptionTowardSun: 1.21
@@ -272,6 +272,10 @@ MonoBehaviour:
   backScattering: 0.33
   baseBrightness: 1
   phaseFactor: 0.488
+  vertPos: {fileID: 0}
+  entryPointObj: {fileID: 0}
+  exitPointObj: {fileID: 0}
+  rayObjs: []
 --- !u!114 &7588722093823533346
 MonoBehaviour:
   m_ObjectHideFlags: 0
