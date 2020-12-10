@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+
 namespace FluidSim3DProject
 {
 	public class Volumetric : MonoBehaviour 
@@ -15,6 +16,12 @@ namespace FluidSim3DProject
 		public Texture2D blueNoise;
 		public float rayOffsetStrength = 1.0f;
 
+		[Header (HEADER_DECORATION + "Base Shape" + HEADER_DECORATION)]
+		public Texture3D baseShapeNoise;
+		public Vector4 shapeNoiseWeights = new Vector4(1, 0.48f, 0.15f, 0);
+		public float densityOffset = -4.27f;
+		public float cloudScale = 0.6f;
+		//public float densityMultiplier = 1.0f;
 
 		[Header (HEADER_DECORATION + "Fire fluid settings" + HEADER_DECORATION)]
 
@@ -46,9 +53,10 @@ namespace FluidSim3DProject
             simulator.Init(); //Initialize fire fluid
 			this.SetParametersOnMaterial();
 
+			/*
             Transform boundingBoxTransform = this.transform.parent;
-			Debug.Log("_BoundingPosition: " + boundingBoxTransform.localPosition);
-			Debug.Log("_BoundingScale: " + boundingBoxTransform.localScale);
+			//Debug.Log("_BoundingPosition: " + boundingBoxTransform.localPosition);
+			//Debug.Log("_BoundingScale: " + boundingBoxTransform.localScale);
 			this.rayObjs = new List<GameObject>();
 			for(int i=0; i < 64 + 5; i++) {
 				GameObject obj = Object.Instantiate(vertPos) as GameObject;
@@ -63,6 +71,7 @@ namespace FluidSim3DProject
 				this.lightRayObjs.Add(obj);
 			}
 			Test();
+			*/
         }
 
         void Update() {
@@ -73,6 +82,13 @@ namespace FluidSim3DProject
 		void SetParametersOnMaterial() {
             Transform boundingBoxTransform = this.transform.parent;
             Material material = this.GetComponent<Renderer>().material;
+
+			material.SetTexture ("NoiseTex", baseShapeNoise);
+			material.SetVector ("_ShapeNoiseWeights", shapeNoiseWeights);
+			material.SetFloat ("_DensityOffset", densityOffset);
+			material.SetFloat ("_CloudScale", cloudScale);
+			//material.SetFloat ("_DensityMultiplier", densityMultiplier);
+			//Debug.Log("noise: " + noiseGen.shapeTexture);
             
             material.SetVector ("boundsMin", boundingBoxTransform.position - boundingBoxTransform.localScale / 2);
 			material.SetVector ("boundsMax", boundingBoxTransform.position + boundingBoxTransform.localScale / 2);
@@ -109,6 +125,7 @@ namespace FluidSim3DProject
             simulator.ReleaseAll();
         }
 
+/*
 		void Lightmarch(Vector3 rayWorldPos, BoundingBox boundingBox) {
 			Vector3 lightPos = light.transform.position;
 			Ray rayTowardsLight = new Ray(); //Ray from cloud particle position to light position.
@@ -124,7 +141,7 @@ namespace FluidSim3DProject
 			Vector3 lightRayPos = rayWorldPos;
 			for (int step = 0; step < RAY_STEPS_TO_LIGHT; step ++) {
 				lightRayPos += rayTowardsLight.dir * stepSize;
-				Debug.Log("lightRayPos: " + lightRayPos);
+				//Debug.Log("lightRayPos: " + lightRayPos);
 				this.lightRayObjs[step].transform.position = lightRayPos;
 			}
 		}
@@ -169,19 +186,17 @@ namespace FluidSim3DProject
 				rayPos = entryPoint + ray.dir * dstTravelled; //
 				//Vector3 tmp = (rayPos - p + 0.5f*s);
 				//Vector3 rayPosOnUVW = new Vector3(tmp.x / s.x, tmp.y / s.y, tmp.z / s.z);
-				/*
 				Debug.Log("entryPoint: " + entryPoint);
 				Debug.Log("ray.dir: " + ray.dir);
 				Debug.Log("dstTravelled: " + dstTravelled);
 				Debug.Log("=====================");
-				*/
 
 				this.rayObjs[cnt].transform.position = rayPos;
 				dstTravelled += stepSize;
 				cnt++;
 				//rayPos += ds;
 			}
-			Debug.Log("while cnt: " + cnt);
+			//Debug.Log("while cnt: " + cnt);
 		}
 
 		public class Ray {
@@ -210,6 +225,7 @@ namespace FluidSim3DProject
 
 			return new Vector2(distanceIntersectedToNearBounds, distanceIntersectedToFarBounds);
 		}
+		*/
 
     }
 }

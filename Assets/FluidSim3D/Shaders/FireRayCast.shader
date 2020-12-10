@@ -9,19 +9,31 @@ Shader "3DFluidSim/FireRayCast"
 	{
 		_FireGradient("FireGradient", 2D) = "red" {}
 		_SmokeGradient("SmokeGradient", 2D) = "white" {}
-		//_SmokeColor("SmokeGradient", Color) = (0,0,0,1)
+
+		_SmokeColor("SmokeColor", Color) = (1,1,1,1)
+		
 		//_SmokeAbsorption("SmokeAbsorbtion", float) = 60.0
 		//_FireAbsorption("FireAbsorbtion", float) = 40.0
 	}
 	SubShader 
 	{
-		Tags { "Queue" = "Transparent" }
+		Tags {
+			"Queue" = "Transparent"
+			"RenderType" = "Transparent"
+		}
+
+        // No culling or depth
+		Cull Off ZWrite Off ZTest Always
+
+		//col.xyz * col.w + backCol.xyz * (1 - col.w)
+		Blend SrcAlpha OneMinusSrcAlpha
+		
 	
     	Pass 
     	{
     	
-    		Cull front
-    		Blend SrcAlpha OneMinusSrcAlpha
+    		//Cull front
+    		//Blend SrcAlpha OneMinusSrcAlpha
 
 			CGPROGRAM
 			#include "UnityCG.cginc"
@@ -64,7 +76,7 @@ Shader "3DFluidSim/FireRayCast"
 			}
 			
 			#define RAY_STEPS_TO_FLUID 64
-			#define RAY_STEPS_TO_LIGHT 16
+			#define RAY_STEPS_TO_LIGHT 8
 
 			struct Ray {
 				float3 origin;
@@ -88,7 +100,9 @@ Shader "3DFluidSim/FireRayCast"
 			float3 boundsMin;
 
 			//Textures
+            Texture3D<float4> NoiseTex;
             Texture2D<float4> BlueNoise;
+			SamplerState samplerNoiseTex;
 			SamplerState samplerBlueNoise;
 			
 			//Unity provided
@@ -98,7 +112,10 @@ Shader "3DFluidSim/FireRayCast"
 			float _RayOffsetStrength;
 
 			// Shape settings
+			float4 _ShapeNoiseWeights;
 			float4 _PhaseParams;
+			float _DensityOffset;
+			float _CloudScale;
 
 			// Light settings
             float _LightAbsorptionTowardSun;
@@ -107,16 +124,22 @@ Shader "3DFluidSim/FireRayCast"
             float4 _LightColor0;
 			float4 _SkyColor;
 			
-			// Henyey-Greenstein
+			// Henyey-Greenstein(散乱位相関数モデル)
+			// https://www.astro.umd.edu/~jph/HG_note.pdf
             float hg(float a, float g) {
                 float g2 = g*g;
                 return (1-g2) / (4*3.1415*pow(1+g2-2*g*(a), 1.5));
             }
 
+			//https://www.cps-jp.org/~mosir/pub/2013/2013-11-28/01_satou/pub-web/20131128_satou_01.pdf 
             float phase(float a) {
                 float blend = .5;
                 float hgBlend = hg(a,_PhaseParams.x) * (1-blend) + hg(a,-_PhaseParams.y) * blend;
                 return _PhaseParams.z + hgBlend*_PhaseParams.w;
+            }
+
+			float remap(float v, float minOld, float maxOld, float minNew, float maxNew) {
+                return minNew + (v-minOld) * (maxNew - minNew) / (maxOld-minOld);
             }
 
 			float2 squareUV(float2 uv) {
@@ -193,6 +216,50 @@ Shader "3DFluidSim/FireRayCast"
 				
 			}
 
+			//Convert from world position to uvw
+            float3 convertFromWorldPosToUVW(float3 rayWorldPos) {
+				float3 rayUVWPos = (rayWorldPos - _BoundingPosition + 0.5*_BoundingScale)/_BoundingScale;
+				return rayUVWPos;
+			}
+
+            float sampleDensity(float3 rayWorldPos, BoundingBox boundingBox) {
+				float3 rayUVWPos = convertFromWorldPosToUVW(rayWorldPos);
+				float fluidSimulatedDensity = SampleBilinear(_Density, rayUVWPos, _Size);
+				//return fluidSimulatedDensity;
+
+				// Calculate falloff at along x/z edges of the cloud container
+                const float containerEdgeFadeDst = 50;
+                float dstFromEdgeX = min(containerEdgeFadeDst,
+						min(rayWorldPos.x - boundingBox.Min.x, boundingBox.Max.x - rayWorldPos.x));
+                float dstFromEdgeZ = min(containerEdgeFadeDst,
+						min(rayWorldPos.z - boundingBox.Min.z, boundingBox.Max.z - rayWorldPos.z));
+                float edgeWeight = min(dstFromEdgeZ,dstFromEdgeX)/containerEdgeFadeDst;
+
+                // Calculate height gradient from weather map
+				float3 boundingBoxSize = boundingBox.Max - boundingBox.Min;
+                float gMin = .2;
+                float gMax = .7;
+                float heightPercent = (rayWorldPos.y - boundingBox.Min.y) / boundingBoxSize.y;
+                float heightGradient = saturate(remap(heightPercent, 0.0, gMin, 0, 1)) * saturate(remap(heightPercent, 1, gMax, 0, 1));
+                heightGradient *= edgeWeight;
+
+                // Calculate base shape density
+				const int mipLevel = 0;
+				const float baseScale = 1.0;
+				float3 uvw = (boundingBoxSize * 0.5 + rayUVWPos) * baseScale * _CloudScale;
+                float4 shapeNoise = NoiseTex.SampleLevel(samplerNoiseTex, uvw, mipLevel);
+				//return shapeNoise.x;
+
+                float4 normalizedShapeWeights = _ShapeNoiseWeights / dot(_ShapeNoiseWeights, 1);
+                float shapeFBM = dot(shapeNoise, normalizedShapeWeights) * heightGradient;
+                //float density = (shapeFBM + _DensityOffset * .1);
+                float density = (shapeFBM + _DensityOffset * .1) * fluidSimulatedDensity;
+                //float density = _DensityOffset * 0.1 + fluidSimulatedDensity;
+
+				return density;
+				//return shapeFBM;
+			}
+
 			// Calculate proportion of light that reaches the given point from the lightsource
 			//
 			// rayWorldPosFromCamera: expects WORLD POSITION
@@ -219,15 +286,13 @@ Shader "3DFluidSim/FireRayCast"
 				float3 lightRayPos = rayTowardsLight.origin;
                 for (int step = 0; step < RAY_STEPS_TO_LIGHT; step ++) {
                     lightRayPos += rayTowardsLight.dir * stepSize;
-
-					float3 rayPosOnUVW = (lightRayPos - _BoundingPosition + 0.5*_BoundingScale)/_BoundingScale;
-					float density = SampleBilinear(_Density, rayPosOnUVW, _Size);
+					float density = sampleDensity(lightRayPos, boundingBox);
                     totalDensity += max(0, density * stepSize);
                 }
-				return totalDensity > 0 ? 1 : 0;
+				//return totalDensity > 0 ? 0 : 1;
 
-                //float transmittance = exp(-totalDensity * _LightAbsorptionTowardSun);
-                //return _DarknessThreshold + transmittance * (1-_DarknessThreshold);
+                float transmittance = exp(-totalDensity * _LightAbsorptionTowardSun);
+                return _DarknessThreshold + transmittance * (1-_DarknessThreshold);
             }
 
 
@@ -237,6 +302,9 @@ Shader "3DFluidSim/FireRayCast"
 			{
 				float2 screenUV = (IN.screenPos.xy / IN.screenPos.z) * 0.5f + 0.5f;
 				float viewLength = length(IN.viewVector);
+
+				//float4 shapeNoise = NoiseTex.SampleLevel(samplerNoiseTex, float3(screenUV,0), 0);
+				//return shapeNoise;
 
 				Ray ray;
 				ray.origin = _WorldSpaceCameraPos;
@@ -267,8 +335,8 @@ Shader "3DFluidSim/FireRayCast"
    				entryPoint = (entryPoint + 0.5*_BoundingScale)/_BoundingScale;
    				exitPoint = (exitPoint + 0.5*_BoundingScale)/_BoundingScale;
 				   */
-				float randomOffset = BlueNoise.SampleLevel(samplerBlueNoise, squareUV(screenUV * 30), 0);
-				randomOffset *= _RayOffsetStrength;
+				//float randomOffset = BlueNoise.SampleLevel(samplerBlueNoise, squareUV(screenUV * 30), 0);
+				//randomOffset *= _RayOffsetStrength;
 				//return float4(randomOffset, 0, 0, 1);
 
 				// Phase function makes clouds brighter around sun
@@ -286,21 +354,21 @@ Shader "3DFluidSim/FireRayCast"
 			    float fireTransmittance = 1.0, smokeTransmittance = 1.0;
 				float dstLimit = dstInsideBox - dstToBox;
 				float dstTravelled = 0.0;
-				//float dstTravelled = lerp(0, dstLimit, randomOffset);
+				//float dstTravelled = randomOffset;
 			
-				return float4(lightmarch(IN.worldPos, boundingBox), 0,0,1);
+				//return float4(lightmarch(IN.worldPos, boundingBox), 0,0,1);
 
-				while (dstTravelled < dstLimit) {
+				//while (dstTravelled < dstLimit) {
    				//for(int i=0; i < RAY_STEPS_TO_FLUID; i++, rayPos += ds) {
-   				//for(int i=0; i < RAY_STEPS_TO_FLUID; i++, dstTravelled += stepSize) {
+   				for(int i=0; i < RAY_STEPS_TO_FLUID; i++, dstTravelled += stepSize) {
 					rayPos = entryPoint + ray.dir * dstTravelled;
 
 					//Convert World position to UVW position
-					float3 rayPosOnUVW = (rayPos - _BoundingPosition + 0.5*_BoundingScale)/_BoundingScale;
+					//float3 rayPosOnUVW = (rayPos - _BoundingPosition + 0.5*_BoundingScale)/_BoundingScale;
 					//rayPosOnUVW = (rayPosOnUVW - _BoundingPosition) * _BoundingScale + float3(0.5, 0.5, 0.5);
 
-   					float density = SampleBilinear(_Density, rayPosOnUVW, _Size);
-   					float reaction = SampleBilinear(_Reaction, rayPosOnUVW, _Size);
+					float density = sampleDensity(rayPos, boundingBox);
+   					//float reaction = SampleBilinear(_Reaction, rayPosOnUVW, _Size);
         			//smokeTransmittance *= 1.0-saturate(density*stepSize*_SmokeAbsorption);
         			//fireTransmittance *= 1.0-saturate(reaction*stepSize*_FireAbsorption);
 
@@ -312,7 +380,7 @@ Shader "3DFluidSim/FireRayCast"
 						//if very dense, not much light makes it through
 
 						if(smokeTransmittance <= 0.01) break;
-					}
+					} 
 
         			//if(fireTransmittance <= 0.01 && smokeTransmittance <= 0.01) break;
 
@@ -323,13 +391,13 @@ Shader "3DFluidSim/FireRayCast"
 			    //float4 fire = tex2D(_FireGradient, float2(fireTransmittance,0)) * (1.0-fireTransmittance);
 				//return fire + smoke;
 
-				//float4 smoke = _SkyColor * smokeTransmittance + lightEnergy * _LightColor0; //little bit blue sky , bit light color
-				//return smoke;
-				return float4(_WorldSpaceLightPos0.xyz, 1);
-				//float4 smoke = tex2D(_SmokeGradient, float2(smokeTransmittance,0)) * (1.0 - smokeTransmittance);
-				//float4 smoke = lightEnergy * _LightColor0;
-				//return smoke;
+				float3 backgroundCol = _SkyColor * smokeTransmittance; //float4 to float3
+				float3 cloudCol = lightEnergy * _LightColor0; //float4 to float3
+				float3 smokeCol = cloudCol; //little bit blue sky , bit light color
+				//if (lightEnergy <= 0.1) { lightEnergy = 0.0; }
 
+				//return float4(_WorldSpaceLightPos0.xyz, 1);
+				return float4(smokeCol, 1.0-smokeTransmittance);
 			}
 
 
