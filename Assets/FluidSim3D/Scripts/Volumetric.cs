@@ -80,7 +80,7 @@ namespace FluidSim3DProject
         }
 
 		void SetParametersOnMaterial() {
-            Transform boundingBoxTransform = this.transform.parent;
+            Transform boundingBoxTransform = this.transform.parent.parent;
             Material material = this.GetComponent<Renderer>().material;
 
 			material.SetTexture ("NoiseTex", baseShapeNoise);

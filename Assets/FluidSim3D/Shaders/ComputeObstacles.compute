@@ -1,10 +1,26 @@
-
+//#pragma kernel Init
 #pragma kernel CSMain
 #define NUM_THREADS 8
 
-float4 _Size;
+float4 _Size; //sphere size
+int _Width, _Height, _Depth; //num of voxels
 
+StructuredBuffer<float> _Voxels;
 RWStructuredBuffer<float> _Write;
+
+/*
+int get_voxel_index(int x, int y, int z) {
+    return z * (_Width * _Height) + y * _Width + x;
+}
+
+[numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
+void Init (int3 id : SV_DispatchThreadID)
+{
+    int idx = id.x + id.y*_Size.x + id.z*_Size.x*_Size.y;
+    float obstacle = 0;
+    _Write[idx] = obstacle;
+}
+*/
 
 [numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
 void CSMain (int3 id : SV_DispatchThreadID)

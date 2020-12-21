@@ -1,31 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Whinarn.UnityMeshSimplifier.Runtime", "Whinarn.UnityMeshSimplifier.Runtime.csproj", "{afa9086c-2cdc-0665-0fcf-67d0ce4c69e5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-firstpass", "Assembly-CSharp-firstpass.csproj", "{15f458de-5648-107d-5bd8-c8493309458e}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{e397d5c8-3c23-d53a-4219-80f31c83c43c}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Whinarn.UnityMeshSimplifier.Editor", "Whinarn.UnityMeshSimplifier.Editor.csproj", "{6ca86961-ce9e-18d3-cc99-ad44b2dea110}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor-firstpass", "Assembly-CSharp-Editor-firstpass.csproj", "{a31dbd9c-99f8-5bfd-2e5a-523ac52ce9f7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{1c7de0f3-5de4-c8cf-338c-e374d19476eb}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{afa9086c-2cdc-0665-0fcf-67d0ce4c69e5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{afa9086c-2cdc-0665-0fcf-67d0ce4c69e5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15f458de-5648-107d-5bd8-c8493309458e}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15f458de-5648-107d-5bd8-c8493309458e}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{e397d5c8-3c23-d53a-4219-80f31c83c43c}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{e397d5c8-3c23-d53a-4219-80f31c83c43c}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6ca86961-ce9e-18d3-cc99-ad44b2dea110}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6ca86961-ce9e-18d3-cc99-ad44b2dea110}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{a31dbd9c-99f8-5bfd-2e5a-523ac52ce9f7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{a31dbd9c-99f8-5bfd-2e5a-523ac52ce9f7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1c7de0f3-5de4-c8cf-338c-e374d19476eb}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1c7de0f3-5de4-c8cf-338c-e374d19476eb}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

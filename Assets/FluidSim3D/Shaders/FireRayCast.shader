@@ -37,6 +37,7 @@ Shader "3DFluidSim/FireRayCast"
 
 			CGPROGRAM
 			#include "UnityCG.cginc"
+			#include "./rgb_to_cmyk.hlsl"
 			#pragma target 5.0
 			#pragma vertex vert
 			#pragma fragment frag
@@ -98,6 +99,7 @@ Shader "3DFluidSim/FireRayCast"
 			StructuredBuffer<float> _Density, _Reaction;
 			float3 boundsMax;
 			float3 boundsMin;
+			float4 _SmokeColor;
 
 			//Textures
             Texture3D<float4> NoiseTex;
@@ -152,6 +154,9 @@ Shader "3DFluidSim/FireRayCast"
                 return float2 (x/scale, y/scale);
             }
 
+			float3 blendLikePaint(float3 rbgL, float3 rgbR)	 {
+				return CMYKtoRGB(RGBtoCMYK(rbgL) + RGBtoCMYK(rgbR));
+			}
 
 			float2 rayBoundsDistance(Ray ray, BoundingBox boundingBox)
 			{
@@ -294,9 +299,6 @@ Shader "3DFluidSim/FireRayCast"
                 float transmittance = exp(-totalDensity * _LightAbsorptionTowardSun);
                 return _DarknessThreshold + transmittance * (1-_DarknessThreshold);
             }
-
-
-
 			
 			float4 frag(v2f IN) : COLOR
 			{
@@ -392,11 +394,8 @@ Shader "3DFluidSim/FireRayCast"
 				//return fire + smoke;
 
 				float3 backgroundCol = _SkyColor * smokeTransmittance; //float4 to float3
-				float3 cloudCol = lightEnergy * _LightColor0; //float4 to float3
-				float3 smokeCol = cloudCol; //little bit blue sky , bit light color
-				//if (lightEnergy <= 0.1) { lightEnergy = 0.0; }
+				float3 smokeCol = lightEnergy * blendLikePaint(_LightColor0.rgb, _SmokeColor.rgb);
 
-				//return float4(_WorldSpaceLightPos0.xyz, 1);
 				return float4(smokeCol, 1.0-smokeTransmittance);
 			}
 

@@ -405,7 +405,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1560554963
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -490,6 +490,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -500,6 +508,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_LocalPosition.z
       value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_LocalRotation.x
@@ -513,29 +525,21 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 4
+    - target: {fileID: 11400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: m_depth
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_width
       value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_depth
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_reactionDecay
       value: .00100000005
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: m_densityDissipation
+      value: .999000013
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_reactionAdvectionType
@@ -545,57 +549,65 @@ PrefabInstance:
       propertyPath: m_reactionExtinguishment
       value: .00999999978
       objectReference: {fileID: 0}
-    - target: {fileID: 11400000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_densityDissipation
-      value: .999000013
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: rayOffsetStrength
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: vertPos
-      value: 
-      objectReference: {fileID: 1398722344}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: entryPointObj
-      value: 
-      objectReference: {fileID: 422292053}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: exitPointObj
-      value: 
-      objectReference: {fileID: 1862267117}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: darknessThreshold
-      value: 0.461
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: lightAbsorptionThroughCloud
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: light
       value: 
       objectReference: {fileID: 1803253977}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: skyColor.r
-      value: 1
+      propertyPath: vertPos
+      value: 
+      objectReference: {fileID: 1398722344}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: noiseGen
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: skyColor.g
-      value: 0
+      propertyPath: cloudScale
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: skyColor.a
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: skyColor.b
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: baseBrightness
-      value: 1.56
+      propertyPath: skyColor.g
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: noiseGen
+      propertyPath: skyColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: exitPointObj
       value: 
+      objectReference: {fileID: 1862267117}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: densityOffset
+      value: 1500
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: entryPointObj
+      value: 
+      objectReference: {fileID: 422292053}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: baseBrightness
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: baseShapeNoise
+      value: 
+      objectReference: {fileID: 11700000, guid: 8dde7f0c595d5ff43a79c1442cbcbacb, type: 2}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: darknessThreshold
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: rayOffsetStrength
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: shapeNoiseWeights.x
@@ -610,20 +622,12 @@ PrefabInstance:
       value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: densityOffset
-      value: 1500
+      propertyPath: lightAbsorptionTowardSun
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: baseShapeNoise
-      value: 
-      objectReference: {fileID: 11700000, guid: 8dde7f0c595d5ff43a79c1442cbcbacb, type: 2}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: cloudScale
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: skyColor.a
-      value: 1
+      propertyPath: lightAbsorptionThroughCloud
+      value: 1.21
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
@@ -655,7 +659,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.990005, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using VoxelSystem;
 
 namespace FluidSim3DProject
 {
@@ -10,6 +12,8 @@ namespace FluidSim3DProject
 		const int WRITE = 1;
 		const int PHI_N_HAT = 0;
 		const int PHI_N_1_HAT = 1;
+
+		public List<GameObject> spawns;
 		
 		public enum ADVECTION { NORMAL = 1, BFECC = 2, MACCORMACK = 3 };
 		
@@ -50,6 +54,11 @@ namespace FluidSim3DProject
 		ComputeBuffer[] m_density, m_velocity, m_pressure, m_temperature, m_phi, m_reaction;
 		ComputeBuffer m_temp3f, m_obstacles;
 
+		static class ShaderIDs
+		{
+			public static readonly int BaseParams = Shader.PropertyToID("_BaseParams");
+		}
+
 		public void Init() 
 		{
 			//Dimension sizes must be pow2 numbers
@@ -60,6 +69,15 @@ namespace FluidSim3DProject
 			//Put all dimension sizes in a vector for easy parsing to shader and also prevents user changing
 			//dimension sizes during play
 			m_size = new Vector4(m_width, m_height, m_depth, 0.0f);
+
+/*
+			//Set a number of voxels
+			foreach (GameObject spawn in spawns) {
+				if (spawn.GetComponent<Spawn>() != null) {
+					spawn.GetComponent<Spawn>().numOfVoxels = m_height;
+				}
+			}
+*/
 			
 			//Create all the buffers needed
 			
@@ -108,9 +126,28 @@ namespace FluidSim3DProject
 		
 		void ComputeObstacles()
 		{
+			//Set to zero
+			/*
+			var obstacleInitKernel = new Kernel(m_computeObstacles, "Init");
 			m_computeObstacles.SetVector("_Size", m_size);
-			m_computeObstacles.SetBuffer(0, "_Write", m_obstacles);
-			m_computeObstacles.Dispatch(0, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
+			m_computeObstacles.SetBuffer(obstacleInitKernel.Index, "_Write", m_obstacles);
+			m_computeObstacles.Dispatch(obstacleInitKernel.Index, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
+
+			//Set voxels
+			foreach (GameObject spawn in spawns) {
+				if (spawn.GetComponent<Spawn>() != null) {
+					GPUVoxelData voxelData = spawn.GetComponent<Spawn>().GetGPUVoxelData();
+
+					var obstacleMainKernel = new Kernel(m_computeObstacles, "CSMain");
+					m_computeObstacles.SetVector("_Size", m_size);
+					m_computeObstacles.SetBuffer(obstacleMainKernel.Index, "_Write", m_obstacles);
+					m_computeObstacles.SetBuffer(obstacleMainKernel.Index, "_Voxels", voxelData.Buffer);
+					m_computeObstacles.Dispatch(obstacleMainKernel.Index,
+						(int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
+
+				}
+			}
+			*/
 			
 		}
 		
