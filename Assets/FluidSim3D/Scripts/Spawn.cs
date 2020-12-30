@@ -17,7 +17,7 @@ namespace FluidSim3DProject
 
         [SerializeField] protected GameObject spawnObj;
         // [SerializeField] protected Material voxelMaterial;
-        [SerializeField] protected ComputeShader voxelizer, particleUpdate;
+        [SerializeField] protected ComputeShader voxelizer;
         public int numOfVoxels = 128;
 
         protected Kernel setupKernel, updateKernel;
@@ -62,34 +62,8 @@ namespace FluidSim3DProject
             
             voxelsInBounds = GPUVoxelizer.Voxelize(voxelizer, mesh, this.spawnObj.transform, this.mediator.bounds, numOfVoxels, true);
             //voxelsInBounds = GPUVoxelizer.Voxelize(voxelizer, mesh, this.mediator.bounds, numOfVoxels, true);
-            var pointMesh = BuildPoints(voxelsInBounds);
-            particleBuffer = new ComputeBuffer(pointMesh.vertexCount, Marshal.SizeOf(typeof(VoxelSystem.Demo.VParticle_t)));
 
-            this.GetComponent<MeshFilter>().sharedMesh = pointMesh;
-
-
-
-            /*
-            if (type == MeshVisualType.Mesh) {
-                //this.GetComponent<MeshFilter>().sharedMesh = defaultMesh;
-                this.spawnObj.GetComponent<MeshFilter>().sharedMesh = null;
-            } else if (type == MeshVisualType.Voxel) {
-                this.spawnObj.GetComponent<MeshFilter>().sharedMesh = VoxelMesh.Build(voxelsInBounds.GetData(), voxelsInBounds.UnitLength, true);
-            } else if (type == MeshVisualType.None) {
-                this.spawnObj.GetComponent<MeshFilter>().sharedMesh = null;
-            } */
-
-            block = new MaterialPropertyBlock();
-            Renderer renderer = this.GetComponent<Renderer>();
-            renderer.GetPropertyBlock(block);
-
-            block.SetBuffer(kParticleBufferKey, particleBuffer);
-            renderer.SetPropertyBlock(block);
-
-            setupKernel = new Kernel(particleUpdate, kSetupKernelKey);
-            updateKernel = new Kernel(particleUpdate, kUpdateKernelKey);
-
-            Compute(setupKernel, voxelsInBounds, Time.deltaTime);
+            this.GetComponent<MeshFilter>().sharedMesh = VoxelMesh.Build(voxelsInBounds.GetData(), voxelsInBounds.UnitLength, true);
 
         }
         
@@ -112,33 +86,6 @@ namespace FluidSim3DProject
             //voxelsInBounds = GPUVoxelizer.Voxelize(voxelizer, mesh, numOfVoxels, true);
             voxelsInBounds = GPUVoxelizer.Voxelize(voxelizer, mesh, this.spawnObj.transform, this.mediator.bounds, numOfVoxels, true);
 
-            Compute(updateKernel, voxelsInBounds, Time.deltaTime);
-        }
-
-        void Compute(Kernel kernel, GPUVoxelData data, float dt)
-        {
-            particleUpdate.SetBuffer(kernel.Index, kVoxelBufferKey, data.Buffer);
-            particleUpdate.SetInt(kVoxelCountKey, data.Buffer.count);
-            particleUpdate.SetFloat(kUnitLengthKey, data.UnitLength);
-
-            particleUpdate.SetBuffer(kernel.Index, kParticleBufferKey, particleBuffer);
-            particleUpdate.SetInt(kParticleCountKey, particleBuffer.count);
-
-            Debug.LogFormat("group thread: {0}", particleBuffer.count / (int)kernel.ThreadX + 1);
-            particleUpdate.Dispatch(kernel.Index, particleBuffer.count / (int)kernel.ThreadX + 1, (int)kernel.ThreadY, (int)kernel.ThreadZ);
-        }
-
-        Mesh BuildPoints(GPUVoxelData data)
-        {
-            var count = data.Width * data.Height * data.Depth;
-            var mesh = new Mesh();
-			mesh.indexFormat = (count > 65535) ? IndexFormat.UInt32 : IndexFormat.UInt16;
-            mesh.vertices = new Vector3[count];
-            var indices = new int[count];
-            for (int i = 0; i < count; i++) indices[i] = i;
-            mesh.SetIndices(indices, MeshTopology.Points, 0);
-            mesh.RecalculateBounds();
-            return mesh;
         }
 
         public void SetMediator(Mediator mediator) {

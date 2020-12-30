@@ -2,7 +2,7 @@
 #pragma kernel Setup
 #pragma kernel Update
 
-#define THREAD [numthreads(8, 1, 1)]
+#define THREAD [numthreads(64, 1, 1)]
 #define DISCARD_OVERFLOW if (id.x >= _ParticleCount) return;
 
 #include "../../../Shaders/Voxel.cginc"

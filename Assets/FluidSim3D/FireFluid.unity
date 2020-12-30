@@ -750,7 +750,7 @@ PrefabInstance:
     - target: {fileID: 981529412751423329, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 69a35ce55fb431644bd8cc83369dd77d, type: 2}
+      objectReference: {fileID: 2100000, guid: 5c3213a55524f3a458cb2c807d40ad3a, type: 2}
     - target: {fileID: 2292976164161802465, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -854,7 +854,7 @@ PrefabInstance:
     - target: {fileID: 4521150708513128675, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: particleUpdate
       value: 
-      objectReference: {fileID: 7200000, guid: 0bf44fd8e47e7984c9facf8ac3495035, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 5422831273334471005, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_Enabled
       value: 1
