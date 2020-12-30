@@ -29,6 +29,7 @@ Shader "3DFluidSim/FireRayCast"
 		Blend SrcAlpha OneMinusSrcAlpha
 		
 	
+		GrabPass{ }
     	Pass 
     	{
     	
@@ -106,6 +107,7 @@ Shader "3DFluidSim/FireRayCast"
             Texture2D<float4> BlueNoise;
 			SamplerState samplerNoiseTex;
 			SamplerState samplerBlueNoise;
+			uniform sampler2D _GrabTexture;
 			
 			//Unity provided
 			sampler2D _CameraDepthTexture;
@@ -232,6 +234,7 @@ Shader "3DFluidSim/FireRayCast"
 				float fluidSimulatedDensity = SampleBilinear(_Density, rayUVWPos, _Size);
 				//return fluidSimulatedDensity;
 
+/*
 				// Calculate falloff at along x/z edges of the cloud container
                 const float containerEdgeFadeDst = 50;
                 float dstFromEdgeX = min(containerEdgeFadeDst,
@@ -257,9 +260,10 @@ Shader "3DFluidSim/FireRayCast"
 
                 float4 normalizedShapeWeights = _ShapeNoiseWeights / dot(_ShapeNoiseWeights, 1);
                 float shapeFBM = dot(shapeNoise, normalizedShapeWeights) * heightGradient;
-                //float density = (shapeFBM + _DensityOffset * .1);
                 float density = (shapeFBM + _DensityOffset * .1) * fluidSimulatedDensity;
-                //float density = _DensityOffset * 0.1 + fluidSimulatedDensity;
+*/
+                float density = _DensityOffset * .1 * fluidSimulatedDensity;
+
 
 				return density;
 				//return shapeFBM;
@@ -393,10 +397,15 @@ Shader "3DFluidSim/FireRayCast"
 			    //float4 fire = tex2D(_FireGradient, float2(fireTransmittance,0)) * (1.0-fireTransmittance);
 				//return fire + smoke;
 
-				float3 backgroundCol = _SkyColor * smokeTransmittance; //float4 to float3
+				//float3 backgroundCol = _SkyColor * smokeTransmittance; //float4 to float3
 				float3 smokeCol = lightEnergy * blendLikePaint(_LightColor0.rgb, _SmokeColor.rgb);
 
-				return float4(smokeCol, 1.0-smokeTransmittance);
+				float4 sceneColor = tex2D(_GrabTexture, screenUV);
+				float3 col = sceneColor * smokeTransmittance + smokeCol;
+				//return float4(smokeTransmittance < 1.0 ? 1.0 : 0.0, 0, 0, 1);
+
+				return float4(col, 1.0-smokeTransmittance);
+				//return float4(smokeCol, 1.0-smokeTransmittance);
 			}
 
 

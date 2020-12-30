@@ -12,8 +12,6 @@ namespace FluidSim3DProject
 		const int WRITE = 1;
 		const int PHI_N_HAT = 0;
 		const int PHI_N_1_HAT = 1;
-
-		public List<GameObject> spawns;
 		
 		public enum ADVECTION { NORMAL = 1, BFECC = 2, MACCORMACK = 3 };
 		
@@ -54,6 +52,8 @@ namespace FluidSim3DProject
 		ComputeBuffer[] m_density, m_velocity, m_pressure, m_temperature, m_phi, m_reaction;
 		ComputeBuffer m_temp3f, m_obstacles;
 
+		private Mediator mediator; //Knows everything
+
 		static class ShaderIDs
 		{
 			public static readonly int BaseParams = Shader.PropertyToID("_BaseParams");
@@ -70,14 +70,10 @@ namespace FluidSim3DProject
 			//dimension sizes during play
 			m_size = new Vector4(m_width, m_height, m_depth, 0.0f);
 
-/*
 			//Set a number of voxels
-			foreach (GameObject spawn in spawns) {
-				if (spawn.GetComponent<Spawn>() != null) {
-					spawn.GetComponent<Spawn>().numOfVoxels = m_height;
-				}
+			foreach (Spawn spawn in this.mediator.spawns) {
+				spawn.numOfVoxels = m_height;
 			}
-*/
 			
 			//Create all the buffers needed
 			
@@ -116,6 +112,10 @@ namespace FluidSim3DProject
 			ComputeObstacles();
 		
 		}
+
+		public void SetMediator(Mediator mediator) {
+			this.mediator = mediator;
+		}
 		
 		void Swap(ComputeBuffer[] buffer)
 		{
@@ -126,33 +126,15 @@ namespace FluidSim3DProject
 		
 		void ComputeObstacles()
 		{
-			//Set to zero
-			/*
-			var obstacleInitKernel = new Kernel(m_computeObstacles, "Init");
+			var obstacleInitKernel = new Kernel(m_computeObstacles, "CSMain");
 			m_computeObstacles.SetVector("_Size", m_size);
 			m_computeObstacles.SetBuffer(obstacleInitKernel.Index, "_Write", m_obstacles);
 			m_computeObstacles.Dispatch(obstacleInitKernel.Index, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
-
-			//Set voxels
-			foreach (GameObject spawn in spawns) {
-				if (spawn.GetComponent<Spawn>() != null) {
-					GPUVoxelData voxelData = spawn.GetComponent<Spawn>().GetGPUVoxelData();
-
-					var obstacleMainKernel = new Kernel(m_computeObstacles, "CSMain");
-					m_computeObstacles.SetVector("_Size", m_size);
-					m_computeObstacles.SetBuffer(obstacleMainKernel.Index, "_Write", m_obstacles);
-					m_computeObstacles.SetBuffer(obstacleMainKernel.Index, "_Voxels", voxelData.Buffer);
-					m_computeObstacles.Dispatch(obstacleMainKernel.Index,
-						(int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
-
-				}
-			}
-			*/
-			
 		}
 		
 		void ApplyImpulse(float dt, float amount, ComputeBuffer[] buffer)
 		{
+			/*
 			m_applyImpulse.SetVector("_Size", m_size);
 			m_applyImpulse.SetFloat("_Radius", m_inputRadius);
 			m_applyImpulse.SetFloat("_Amount", amount);
@@ -163,12 +145,30 @@ namespace FluidSim3DProject
 			m_applyImpulse.SetBuffer(0, "_Write", buffer[WRITE]);
 			
 			m_applyImpulse.Dispatch(0, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
+			*/
+
+
+			//Set voxels
+			var impulseKernel = new Kernel(m_applyImpulse, "GaussImpulse");
+			foreach (Spawn spawn in this.mediator.spawns) {
+				GPUVoxelData voxelData = spawn.GetGPUVoxelData();
+
+				m_applyImpulse.SetVector("_Size", m_size);
+				m_applyImpulse.SetFloat("_Amount", amount);
+				m_applyImpulse.SetFloat("_DeltaTime", dt);
+				m_applyImpulse.SetBuffer(impulseKernel.Index, "_Read", buffer[READ]);
+				m_applyImpulse.SetBuffer(impulseKernel.Index, "_Write", buffer[WRITE]);
+				m_applyImpulse.SetBuffer(impulseKernel.Index, "_VoxelBuffer", voxelData.Buffer);
+				m_applyImpulse.Dispatch(impulseKernel.Index,
+					(int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
+			}
 			
 			Swap(buffer);
 		}
 		
 		void ApplyExtinguishmentImpulse(float dt, float amount, ComputeBuffer[] buffer)
 		{
+			/*
 			m_applyImpulse.SetVector("_Size", m_size);
 			m_applyImpulse.SetFloat("_Radius", m_inputRadius);
 			m_applyImpulse.SetFloat("_Amount", amount);
@@ -181,6 +181,22 @@ namespace FluidSim3DProject
 			m_applyImpulse.SetBuffer(1, "_Reaction", m_reaction[READ]);
 			
 			m_applyImpulse.Dispatch(1, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
+			*/
+
+			var extinguishmentKernel = new Kernel(m_applyImpulse, "ExtinguishmentImpluse");
+			foreach (Spawn spawn in this.mediator.spawns) {
+				GPUVoxelData voxelData = spawn.GetGPUVoxelData();
+
+				m_applyImpulse.SetVector("_Size", m_size);
+				m_applyImpulse.SetFloat("_Amount", amount);
+				m_applyImpulse.SetFloat("_DeltaTime", dt);
+				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Read", buffer[READ]);
+				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Write", buffer[WRITE]);
+				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_VoxelBuffer", voxelData.Buffer);
+				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Reaction", m_reaction[READ]);
+				m_applyImpulse.Dispatch(extinguishmentKernel.Index,
+					(int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
+			}
 			
 			Swap(buffer);
 		}

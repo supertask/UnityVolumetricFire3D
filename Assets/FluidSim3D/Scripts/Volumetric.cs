@@ -9,8 +9,8 @@ namespace FluidSim3DProject
 	{
         public const string HEADER_DECORATION = " --- ";
 
-        [Header (HEADER_DECORATION + "Core settings" + HEADER_DECORATION)]
-        public FireFluidSim simulator;
+        //[Header (HEADER_DECORATION + "Core settings" + HEADER_DECORATION)]
+        //public FireFluidSim simulator;
 
         [Header (HEADER_DECORATION + "Marching settings" + HEADER_DECORATION)]
 		public Texture2D blueNoise;
@@ -48,10 +48,10 @@ namespace FluidSim3DProject
 
 		public GameObject light;
 
+		private Mediator mediator; //Knows everything
 
-        void Start() {
-            simulator.Init(); //Initialize fire fluid
-			this.SetParametersOnMaterial();
+
+        //void Start() {
 
 			/*
             Transform boundingBoxTransform = this.transform.parent;
@@ -72,14 +72,13 @@ namespace FluidSim3DProject
 			}
 			Test();
 			*/
-        }
+        //}
 
-        void Update() {
-            simulator.Simulate(); //Simulate fire fluid
-			this.SetParametersOnMaterial();
-        }
+		public void SetMediator(Mediator mediator) {
+			this.mediator = mediator;
+		}
 
-		void SetParametersOnMaterial() {
+		public void SetParametersOnMaterial() {
             Transform boundingBoxTransform = this.transform.parent.parent;
             Material material = this.GetComponent<Renderer>().material;
 
@@ -115,15 +114,11 @@ namespace FluidSim3DProject
 			//Debug.Log("_BoundingScale: " + boundingBoxTransform.localScale);
 			material.SetVector("_BoundingPosition", boundingBoxTransform.localPosition);
 			material.SetVector("_BoundingScale", boundingBoxTransform.localScale);
-			material.SetBuffer("_Density", this.simulator.GetDensity());
-			material.SetBuffer("_Reaction", this.simulator.GetReaction());
-			material.SetVector("_Size", this.simulator.GetComputeSize());
+			material.SetBuffer("_Density", this.mediator.fluidSimulator3D.GetDensity());
+			material.SetBuffer("_Reaction", this.mediator.fluidSimulator3D.GetReaction());
+			material.SetVector("_Size", this.mediator.fluidSimulator3D.GetComputeSize());
 
 		}
-
-        void OnDestroy() {
-            simulator.ReleaseAll();
-        }
 
 /*
 		void Lightmarch(Vector3 rayWorldPos, BoundingBox boundingBox) {

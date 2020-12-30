@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/FluidSim3D/FireFluid.unity
+- path: Assets/Packages/Voxelizer/Demo/Scenes/GPUVoxelSkinnedMesh.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637432124824258728
-    m_Hash: 2380648995
+      ticks: 637449451327624298
+    m_Hash: 3014139803
   m_LockFileStatus:
     m_FilePath: C:/Users/Tasuku/Projects/UnityVolumetricFire3D/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637432124874434984
-    m_Hash: 3502454500
+      ticks: 637449451333206373
+    m_Hash: 1413185210
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_PackageAssets:
@@ -157,6 +157,7 @@ m_PackageAssets:
         - 2.0.7
         - 3.0.1
         - 3.0.2
+        - 3.0.3
         compatible:
         - 1.0.2
         - 1.0.6
@@ -178,6 +179,7 @@ m_PackageAssets:
         - 2.0.7
         - 3.0.1
         - 3.0.2
+        - 3.0.3
         verified: 1.2.1
       dependencies:
       - name: com.unity.test-framework
@@ -273,7 +275,7 @@ m_PackageAssets:
       entitlements:
         isAllowed: 1
       isAssetStorePackage: 0
-      datePublishedTicks: 0
+      datePublishedTicks: 637400980850000000
       documentationUrl: 
       hasRepository: 1
       repository:
@@ -350,6 +352,85 @@ m_PackageAssets:
         url: https://github.cds.internal.unity3d.com/unity/com.unity.ide.vscode.git
         revision: b5ec9b38109e52b1b26597d521e4df75e042ebb9
         path: 
+    - packageId: com.unity.postprocessing@3.0.1
+      testable: 0
+      isDirectDependency: 1
+      version: 3.0.1
+      source: 1
+      resolvedPath: C:\Users\Tasuku\Projects\UnityVolumetricFire3D\Library\PackageCache\com.unity.postprocessing@3.0.1
+      assetPath: Packages/com.unity.postprocessing
+      name: com.unity.postprocessing
+      displayName: Post Processing
+      author:
+        name: 
+        email: 
+        url: 
+      category: 
+      type: 
+      description: The post-processing stack (v2) comes with a collection of effects
+        and image filters you can apply to your cameras to improve the visuals of
+        your games.
+      status: 4
+      errors: []
+      versions:
+        all:
+        - 0.1.7
+        - 0.1.8
+        - 2.0.0-beta
+        - 2.0.1-beta
+        - 2.0.2-preview
+        - 2.0.3-preview
+        - 2.0.5-preview
+        - 2.0.7-preview
+        - 2.0.8-preview
+        - 2.0.9-preview
+        - 2.0.10-preview
+        - 2.0.11-preview
+        - 2.0.12-preview
+        - 2.0.13-preview
+        - 2.0.14-preview
+        - 2.0.15-preview
+        - 2.0.16-preview
+        - 2.0.17-preview
+        - 2.1.0
+        - 2.1.1
+        - 2.1.2
+        - 2.1.3
+        - 2.1.4
+        - 2.1.5
+        - 2.1.6
+        - 2.1.7
+        - 2.2.1
+        - 2.2.2
+        - 2.3.0
+        - 3.0.1
+        compatible:
+        - 2.3.0
+        - 3.0.1
+        verified: 3.0.1
+      dependencies: []
+      resolvedDependencies: []
+      keywords: []
+      registry:
+        id: main
+        name: 
+        url: https://packages.unity.com
+        scopes: []
+        isDefault: 1
+        capabilities: 7
+      hasRegistry: 1
+      hideInEditor: 1
+      entitlements:
+        isAllowed: 1
+      isAssetStorePackage: 0
+      datePublishedTicks: 637388019030000000
+      documentationUrl: 
+      hasRepository: 1
+      repository:
+        type: git
+        url: git+https://github.com/Unity-Technologies/PostProcessing.git
+        revision: a6dfd0808db2b14acfc32417e8c5c037ff934a28
+        path: 
     - packageId: com.unity.test-framework@1.1.19
       testable: 0
       isDirectDependency: 1
@@ -395,9 +476,11 @@ m_PackageAssets:
         - 1.1.16
         - 1.1.18
         - 1.1.19
+        - 1.1.20
         compatible:
         - 1.1.19
-        verified: 1.1.19
+        - 1.1.20
+        verified: 1.1.20
       dependencies:
       - name: com.unity.ext.nunit
         version: 1.0.5
@@ -643,6 +726,7 @@ m_PackageAssets:
         - 1.4.2
         - 1.4.3
         - 1.4.4
+        - 1.4.5
         - 1.5.0-pre.2
         - 1.5.0-preview.1
         - 1.5.0-preview.2
@@ -651,6 +735,7 @@ m_PackageAssets:
         - 1.5.0-preview.5
         - 1.5.1-pre.1
         - 1.5.1-pre.2
+        - 1.5.1-pre.3
         compatible:
         - 1.2.6
         - 1.2.7
@@ -686,6 +771,7 @@ m_PackageAssets:
         - 1.4.2
         - 1.4.3
         - 1.4.4
+        - 1.4.5
         - 1.5.0-pre.2
         - 1.5.0-preview.1
         - 1.5.0-preview.2
@@ -694,6 +780,7 @@ m_PackageAssets:
         - 1.5.0-preview.5
         - 1.5.1-pre.1
         - 1.5.1-pre.2
+        - 1.5.1-pre.3
         verified: 1.3.6
       dependencies: []
       resolvedDependencies: []
@@ -2554,13 +2641,15 @@ m_PackageAssets:
         - 0.1.9-preview
         - 1.0.0
         - 1.0.5
+        - 1.0.6
         compatible:
         - 0.1.5-preview
         - 0.1.6-preview
         - 0.1.9-preview
         - 1.0.0
         - 1.0.5
-        verified: 1.0.5
+        - 1.0.6
+        verified: 1.0.6
       dependencies: []
       resolvedDependencies: []
       keywords:
