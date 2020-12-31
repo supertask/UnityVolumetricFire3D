@@ -61,7 +61,6 @@ namespace FluidSim3DProject
             Debug.Log("mesh box size: " + mesh.bounds.size);
             
             voxelsInBounds = GPUVoxelizer.Voxelize(voxelizer, mesh, this.spawnObj.transform, this.mediator.bounds, numOfVoxels, true);
-            //voxelsInBounds = GPUVoxelizer.Voxelize(voxelizer, mesh, this.mediator.bounds, numOfVoxels, true);
 
             this.GetComponent<MeshFilter>().sharedMesh = VoxelMesh.Build(voxelsInBounds.GetData(), voxelsInBounds.UnitLength, true);
 
@@ -78,13 +77,14 @@ namespace FluidSim3DProject
                 //this.spawnObj.GetComponent<MeshFilter>().sharedMesh = null;
             }
 
+/*
             voxelsInBounds.Dispose();
 
             var mesh = SampleMesh();
             if (mesh == null) return;
             Debug.LogFormat("mesh.triangles: {0}", mesh.triangles);
-            //voxelsInBounds = GPUVoxelizer.Voxelize(voxelizer, mesh, numOfVoxels, true);
             voxelsInBounds = GPUVoxelizer.Voxelize(voxelizer, mesh, this.spawnObj.transform, this.mediator.bounds, numOfVoxels, true);
+            */
 
         }
 

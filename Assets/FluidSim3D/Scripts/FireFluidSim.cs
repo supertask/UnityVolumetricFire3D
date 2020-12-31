@@ -78,6 +78,7 @@ namespace FluidSim3DProject
 			//Create all the buffers needed
 			
 			int SIZE = m_width*m_height*m_depth;
+			Debug.LogFormat("simulation size: {0}", SIZE);
 			
 			m_density = new ComputeBuffer[2];
 			m_density[READ] = new ComputeBuffer(SIZE, sizeof(float));
@@ -156,6 +157,8 @@ namespace FluidSim3DProject
 				m_applyImpulse.SetVector("_Size", m_size);
 				m_applyImpulse.SetFloat("_Amount", amount);
 				m_applyImpulse.SetFloat("_DeltaTime", dt);
+				m_applyImpulse.SetFloat("_Radius", m_inputRadius);
+				m_applyImpulse.SetVector("_Pos", m_inputPos);
 				m_applyImpulse.SetBuffer(impulseKernel.Index, "_Read", buffer[READ]);
 				m_applyImpulse.SetBuffer(impulseKernel.Index, "_Write", buffer[WRITE]);
 				m_applyImpulse.SetBuffer(impulseKernel.Index, "_VoxelBuffer", voxelData.Buffer);
@@ -190,6 +193,9 @@ namespace FluidSim3DProject
 				m_applyImpulse.SetVector("_Size", m_size);
 				m_applyImpulse.SetFloat("_Amount", amount);
 				m_applyImpulse.SetFloat("_DeltaTime", dt);
+				m_applyImpulse.SetFloat("_Radius", m_inputRadius);
+				m_applyImpulse.SetVector("_Pos", m_inputPos);
+				m_applyImpulse.SetFloat("_Extinguishment", m_reactionExtinguishment);
 				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Read", buffer[READ]);
 				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Write", buffer[WRITE]);
 				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_VoxelBuffer", voxelData.Buffer);

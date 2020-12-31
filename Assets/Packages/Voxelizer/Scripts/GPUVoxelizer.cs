@@ -26,21 +26,23 @@ namespace VoxelSystem {
             if(n <= 0) {
                 return 0;
             }
+            Debug.LogFormat("GetNearPow2 n:{0}", n);
             var k = Mathf.CeilToInt(Mathf.Log(n, 2));
+            Debug.LogFormat("GetNearPow2 2^k:{0}", k);
             return (int)Mathf.Pow(2, k);
         }
 
-		public static GPUVoxelData Voxelize(ComputeShader voxelizer, Mesh mesh, int resolution = 32, bool volume = true, bool pow2 = false) {
+		public static GPUVoxelData Voxelize(ComputeShader voxelizer, Mesh mesh, int resolution = 32, bool volume = true, bool pow2 = true) {
 			mesh.RecalculateBounds();
             return Voxelize(voxelizer, mesh, mesh.bounds, resolution, volume, pow2);
 		}
 
-        public static GPUVoxelData Voxelize(ComputeShader voxelizer, Mesh mesh, Bounds bounds, int resolution = 32, bool volume = true, bool pow2 = false) {
+        public static GPUVoxelData Voxelize(ComputeShader voxelizer, Mesh mesh, Bounds bounds, int resolution = 32, bool volume = true, bool pow2 = true) {
 			mesh.RecalculateBounds();
             return Voxelize(voxelizer, mesh,Vector3.zero, Quaternion.Euler(0, 0, 0), Vector3.one, 
                 bounds, resolution, volume, pow2);
 		}
-        public static GPUVoxelData Voxelize(ComputeShader voxelizer, Mesh mesh, Transform meshTransform, Bounds bounds, int resolution = 32, bool volume = true, bool pow2 = false) {
+        public static GPUVoxelData Voxelize(ComputeShader voxelizer, Mesh mesh, Transform meshTransform, Bounds bounds, int resolution = 32, bool volume = true, bool pow2 = true) {
 			mesh.RecalculateBounds();
             return Voxelize(voxelizer, mesh, meshTransform.position, meshTransform.rotation, meshTransform.localScale,
                 bounds, resolution, volume, pow2);
@@ -86,10 +88,12 @@ namespace VoxelSystem {
                 w = Mathf.CeilToInt(size.x / unit);
                 h = Mathf.CeilToInt(size.y / unit);
                 d = Mathf.CeilToInt(size.z / unit);
+                Debug.Log("!pow2");
             } else  {
                 w = GetNearPow2(size.x / unit);
                 h = GetNearPow2(size.y / unit);
                 d = GetNearPow2(size.z / unit);
+                Debug.Log("pow2");
             }
             Debug.LogFormat("position:{0}", meshPosition);
             Debug.LogFormat("rotation:{0}", meshRotation);
@@ -99,6 +103,7 @@ namespace VoxelSystem {
 
 			var voxelBuffer = new ComputeBuffer(w * h * d, Marshal.SizeOf(typeof(Voxel_t)));
             var voxels = new Voxel_t[voxelBuffer.count];
+            Debug.LogFormat("voxels count: {0}", voxelBuffer.count);
             voxelBuffer.SetData(voxels); // initialize voxels explicitly
 
 			// send bounds

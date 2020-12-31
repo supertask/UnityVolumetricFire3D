@@ -4,7 +4,7 @@
 #include "../../Packages/Voxelizer/Shaders/Voxel.cginc"
 
 float _Radius, _Amount, _DeltaTime, _Extinguishment;
-float4 _Pos, _Size;
+float4 _Pos, _Size; //size = bounds size
 
 RWStructuredBuffer<float> _Write;
 StructuredBuffer<Voxel> _VoxelBuffer;
@@ -13,49 +13,36 @@ StructuredBuffer<float> _Read, _Reaction;
 #pragma kernel GaussImpulse
 #pragma kernel ExtinguishmentImpluse
 
-[numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
-void GaussImpulse(uint3 id : SV_DispatchThreadID)
-{
-	int idx = id.x + id.y*_Size.x + id.z*_Size.x*_Size.y;	
-    _Write[idx] = _Read[idx] + (_VoxelBuffer[idx].fill * _DeltaTime * _Amount);
-}
-
-
-[numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
-void ExtinguishmentImpluse(uint3 id : SV_DispatchThreadID)
-{
-			
-	int idx = id.x + id.y*_Size.x + id.z*_Size.x*_Size.y;
-	
-	float amount = 0.0;
-	float reaction = _Reaction[idx];
-	
-	if(reaction > 0.0 && reaction < _Extinguishment) 
-		amount = _Amount * reaction;
-	
-    _Write[idx] = _Read[idx] + amount;
-}
-
 /*
 [numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
 void GaussImpulse(uint3 id : SV_DispatchThreadID)
 {
+	int idx = id.x + id.y*_Size.x + id.z*_Size.x*_Size.y;	
+	float3 pos = id/(_Size.xyz-1.0f);
+
+	//float amount = exp(-_VoxelBuffer[idx].fill) * _Amount * _DeltaTime;
+	float amount = (_VoxelBuffer[idx].fill ? 0.0 : 1.0) * _Amount;
+
+    _Write[idx] = _Read[idx] + amount;
+}
+*/
+
+[numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
+void GaussImpulse(uint3 id : SV_DispatchThreadID)
+{
+	int idx = id.x + id.y*_Size.x + id.z*_Size.x*_Size.y;	
 	float3 pos = id/(_Size.xyz-1.0f) - _Pos.xyz;
 	float mag = pos.x*pos.x + pos.y*pos.y + pos.z*pos.z;
 	float rad2 = _Radius*_Radius;
 	
 	float amount = exp(-mag/rad2) * _Amount * _DeltaTime;
-				
-	int idx = id.x + id.y*_Size.x + id.z*_Size.x*_Size.y;	
 	
     _Write[idx] = _Read[idx] + amount;
 }
-*/
-/*
+
 [numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
 void ExtinguishmentImpluse(uint3 id : SV_DispatchThreadID)
 {
-			
 	int idx = id.x + id.y*_Size.x + id.z*_Size.x*_Size.y;
 	
 	float amount = 0.0;
@@ -66,7 +53,6 @@ void ExtinguishmentImpluse(uint3 id : SV_DispatchThreadID)
 	
     _Write[idx] = _Read[idx] + amount;
 }
-*/
 
 
 
