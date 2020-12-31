@@ -4,9 +4,14 @@
 ![fire](./images/UnityVolumetricFire3D.gif)
 
 
+## Env
+
+- Windows 10
+- RTX 2070
+
 ## References
 
-- https://github.com/Scrawk/GPU-GEMS-3D-Fluid-Simulation 
-- https://github.com/SebLague/Clouds
-- https://github.com/mattatz/unity-voxel
-- https://twitter.com/adamshmamshon/status/1266104960326012934
+- Scrawk, The GPU Gems 3D fluid simulation, https://github.com/Scrawk/GPU-GEMS-3D-Fluid-Simulation 
+- Sebastian Lague, Clouds, https://github.com/SebLague/Clouds
+- Mattatz, Unity-voxel, https://github.com/mattatz/unity-voxel
+- Adam Samson, clouds, https://twitter.com/adamshmamshon/status/1266104960326012934
