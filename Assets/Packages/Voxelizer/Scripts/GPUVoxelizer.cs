@@ -21,6 +21,7 @@ namespace VoxelSystem {
 		protected const string kVoxelBufferKey = "_VoxelBuffer", kVoxelTextureKey = "_VoxelTexture";
         protected const string kColorTextureKey = "_ColorTexture";
 
+/*
         public static int GetNearPow2(float n)
         {
             if(n <= 0) {
@@ -31,6 +32,7 @@ namespace VoxelSystem {
             Debug.LogFormat("GetNearPow2 2^k:{0}", k);
             return (int)Mathf.Pow(2, k);
         }
+        */
 
 		public static GPUVoxelData Voxelize(ComputeShader voxelizer, Mesh mesh, int resolution = 32, bool volume = true, bool pow2 = true) {
 			mesh.RecalculateBounds();
@@ -90,9 +92,9 @@ namespace VoxelSystem {
                 d = Mathf.CeilToInt(size.z / unit);
                 Debug.Log("!pow2");
             } else  {
-                w = GetNearPow2(size.x / unit);
-                h = GetNearPow2(size.y / unit);
-                d = GetNearPow2(size.z / unit);
+                w = Mathf.ClosestPowerOfTwo((int)(size.x / unit));
+                h = Mathf.ClosestPowerOfTwo((int)(size.y / unit));
+                d = Mathf.ClosestPowerOfTwo((int)(size.z / unit));
                 Debug.Log("pow2");
             }
             Debug.LogFormat("position:{0}", meshPosition);

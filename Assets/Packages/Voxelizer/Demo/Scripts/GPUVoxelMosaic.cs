@@ -59,7 +59,8 @@ namespace VoxelSystem.Demo
         #region MonoBehaviour functions
 
         void Start () {
-            count = GPUVoxelizer.GetNearPow2(count);
+            //count = GPUVoxelizer.GetNearPow2(count);
+            count = Mathf.ClosestPowerOfTwo(count);
             resolutions = Mathf.FloorToInt(Mathf.Log(count, 2)) - 2;
 
             levels = new GPUVoxelData[resolutions];

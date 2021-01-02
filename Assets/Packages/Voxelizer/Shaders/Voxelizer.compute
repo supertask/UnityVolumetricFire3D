@@ -3,7 +3,7 @@
 #pragma kernel Volume
 #pragma kernel BuildTexture3D
 
-#define THREAD_1D_X 64
+#define THREAD_1D_X 128
 #define THREAD_2D_X 32
 #define THREAD_2D_Y 32
 #define THREAD_3D_X 8

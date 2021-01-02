@@ -39,8 +39,6 @@ namespace FluidSim3DProject
 		public float m_reactionDecay = 0.001f;
 		public float m_reactionExtinguishment = 0.01f;
 		public float m_velocityDissipation = 0.995f;
-		public float m_inputRadius = 0.04f;
-		public Vector4 m_inputPos = new Vector4(0.5f,0.1f,0.5f,0.0f);
 		
 		float m_ambientTemperature = 0.0f;
 		
@@ -70,11 +68,6 @@ namespace FluidSim3DProject
 			//dimension sizes during play
 			m_size = new Vector4(m_width, m_height, m_depth, 0.0f);
 
-			//Set a number of voxels
-			foreach (Spawn spawn in this.mediator.spawns) {
-				spawn.numOfVoxels = m_height;
-			}
-			
 			//Create all the buffers needed
 			
 			int SIZE = m_width*m_height*m_depth;
@@ -135,20 +128,6 @@ namespace FluidSim3DProject
 		
 		void ApplyImpulse(float dt, float amount, ComputeBuffer[] buffer)
 		{
-			/*
-			m_applyImpulse.SetVector("_Size", m_size);
-			m_applyImpulse.SetFloat("_Radius", m_inputRadius);
-			m_applyImpulse.SetFloat("_Amount", amount);
-			m_applyImpulse.SetFloat("_DeltaTime", dt);
-			m_applyImpulse.SetVector("_Pos", m_inputPos);
-			
-			m_applyImpulse.SetBuffer(0, "_Read", buffer[READ]);
-			m_applyImpulse.SetBuffer(0, "_Write", buffer[WRITE]);
-			
-			m_applyImpulse.Dispatch(0, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
-			*/
-
-
 			//Set voxels
 			var impulseKernel = new Kernel(m_applyImpulse, "GaussImpulse");
 			foreach (Spawn spawn in this.mediator.spawns) {
@@ -157,8 +136,8 @@ namespace FluidSim3DProject
 				m_applyImpulse.SetVector("_Size", m_size);
 				m_applyImpulse.SetFloat("_Amount", amount);
 				m_applyImpulse.SetFloat("_DeltaTime", dt);
-				m_applyImpulse.SetFloat("_Radius", m_inputRadius);
-				m_applyImpulse.SetVector("_Pos", m_inputPos);
+				m_applyImpulse.SetVector("_ObjectPosition", spawn.GetSpawnCenter());
+				m_applyImpulse.SetFloat("_Radius", spawn.GetSpawnRadius());
 				m_applyImpulse.SetBuffer(impulseKernel.Index, "_Read", buffer[READ]);
 				m_applyImpulse.SetBuffer(impulseKernel.Index, "_Write", buffer[WRITE]);
 				m_applyImpulse.SetBuffer(impulseKernel.Index, "_VoxelBuffer", voxelData.Buffer);
@@ -171,20 +150,6 @@ namespace FluidSim3DProject
 		
 		void ApplyExtinguishmentImpulse(float dt, float amount, ComputeBuffer[] buffer)
 		{
-			/*
-			m_applyImpulse.SetVector("_Size", m_size);
-			m_applyImpulse.SetFloat("_Radius", m_inputRadius);
-			m_applyImpulse.SetFloat("_Amount", amount);
-			m_applyImpulse.SetFloat("_DeltaTime", dt);
-			m_applyImpulse.SetVector("_Pos", m_inputPos);
-			m_applyImpulse.SetFloat("_Extinguishment", m_reactionExtinguishment);
-			
-			m_applyImpulse.SetBuffer(1, "_Read", buffer[READ]);
-			m_applyImpulse.SetBuffer(1, "_Write", buffer[WRITE]);
-			m_applyImpulse.SetBuffer(1, "_Reaction", m_reaction[READ]);
-			
-			m_applyImpulse.Dispatch(1, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
-			*/
 
 			var extinguishmentKernel = new Kernel(m_applyImpulse, "ExtinguishmentImpluse");
 			foreach (Spawn spawn in this.mediator.spawns) {
@@ -193,8 +158,8 @@ namespace FluidSim3DProject
 				m_applyImpulse.SetVector("_Size", m_size);
 				m_applyImpulse.SetFloat("_Amount", amount);
 				m_applyImpulse.SetFloat("_DeltaTime", dt);
-				m_applyImpulse.SetFloat("_Radius", m_inputRadius);
-				m_applyImpulse.SetVector("_Pos", m_inputPos);
+				m_applyImpulse.SetVector("_ObjectPosition", spawn.GetSpawnCenter());
+				m_applyImpulse.SetFloat("_Radius", spawn.GetSpawnRadius());
 				m_applyImpulse.SetFloat("_Extinguishment", m_reactionExtinguishment);
 				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Read", buffer[READ]);
 				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Write", buffer[WRITE]);

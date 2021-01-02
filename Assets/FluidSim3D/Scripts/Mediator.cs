@@ -20,7 +20,7 @@ namespace FluidSim3DProject
             this.initColleagues();
             this.bounds = new Bounds(this.transform.position, this.transform.localScale);
             foreach(Spawn spawn in spawns) {
-                spawn.InitSpawn();
+                spawn.InitSpawn(); //set voxels
             }
             this.fluidSimulator3D.Init(); //Initialize fire fluid
 			this.volumetric.SetParametersOnMaterial();
