@@ -1,9 +1,17 @@
 
 #define NUM_THREADS 8
 
-
 float4 _Size;
-float _DeltaTime, _Dissipate, _Decay, _Forward;
+float _DeltaTime;
+
+// smoke's dissipate
+float _Dissipate;
+
+// reaction decay
+float _Decay;
+
+// -1.0 or 1.0 substituted by fluid method
+float _Forward;
 
 StructuredBuffer<float3> _Velocity;
 StructuredBuffer<float> _Obstacles;

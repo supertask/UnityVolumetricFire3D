@@ -28,11 +28,31 @@ namespace FluidSim3DProject
 		public int m_height = 128;
 		public int m_depth = 128;
 		public int m_iterations = 10;
+
+		// 渦の強さ
+		// この値が小さいとき, 雲のくずれが少なくなる
+		// 1以上だと雲が発散して見た目が悪くなる.
+		// 0.5 ~ 1.0が理想
 		public float m_vorticityStrength = 1.0f;
+
+		// 雲の密度
+		// 基本1に設定する
+		// もし薄い雲を作る時は少し値を下げる
 		public float m_densityAmount = 1.0f;
+
+		// 雲の密度の散逸（エネルギーが、抵抗力によって熱エネルギーに変化する過程. エネルギーの減少）
+		// 1の時, エネルギーが消失せず雲が残ったままになる. ここでエネルギーが追加されることはないので1以上にしてはいけない．
+		// 0.999にすることでマイフレームごとに0.001ずつエネルギーが減少して, それが熱に置き換わる
 		public float m_densityDissipation = 0.999f;
+
+
+		// 雲の浮力. 0以下の場合, 雲が下に落ちていく. 
 		public float m_densityBuoyancy = 1.0f;
+
+		// 雲の1粒あたりの重さ
 		public float m_densityWeight = 0.0125f;
+
+		//
 		public float m_temperatureAmount = 10.0f;
 		public float m_temperatureDissipation = 0.995f;
 		public float m_reactionAmount = 1.0f;
@@ -40,6 +60,8 @@ namespace FluidSim3DProject
 		public float m_reactionExtinguishment = 0.01f;
 		public float m_velocityDissipation = 0.995f;
 		
+
+		// 周囲の温度, 周囲の温度が浮力に影響を及ぼす
 		float m_ambientTemperature = 0.0f;
 		
 		public ComputeShader m_applyImpulse, m_applyAdvect, m_computeVorticity;
@@ -136,8 +158,10 @@ namespace FluidSim3DProject
 				m_applyImpulse.SetVector("_Size", m_size);
 				m_applyImpulse.SetFloat("_Amount", amount);
 				m_applyImpulse.SetFloat("_DeltaTime", dt);
-				m_applyImpulse.SetVector("_ObjectPosition", spawn.GetSpawnCenter());
 				m_applyImpulse.SetFloat("_Radius", spawn.GetSpawnRadius());
+				m_applyImpulse.SetVector("_ObjectPosition", spawn.GetSpawnCenter());
+				//m_applyImpulse.SetFloat("_Radius", 0.04f);
+				//m_applyImpulse.SetVector("_ObjectPosition", new Vector4(0.5f,0.1f,0.5f,0.0f));
 				m_applyImpulse.SetBuffer(impulseKernel.Index, "_Read", buffer[READ]);
 				m_applyImpulse.SetBuffer(impulseKernel.Index, "_Write", buffer[WRITE]);
 				m_applyImpulse.SetBuffer(impulseKernel.Index, "_VoxelBuffer", voxelData.Buffer);

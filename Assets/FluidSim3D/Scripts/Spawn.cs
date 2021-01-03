@@ -50,7 +50,8 @@ namespace FluidSim3DProject
         private Mesh defaultMesh; //mesh before replacing to voxel meshes
         private Material defaultMaterial; //material before replacing to voxel meshes
 
-        private float spawnObjRadius;
+        private float normalizedSpawnRadius;
+        private Vector3 normalizedSpawnPosition;
 
         public void InitSpawn () {
             var mesh = SampleMesh();
@@ -58,18 +59,43 @@ namespace FluidSim3DProject
             //defaultMesh = mesh;
             //defaultMaterial =this.spawnObj.GetComponent<MeshRenderer>().sharedMaterial;
 
-
+            Bounds fireBounds = this.mediator.bounds;
+            Bounds spawnBounds = this.spawnObj.GetComponent<Renderer>().bounds;
+            Debug.Log("box min: " + this.mediator.bounds.min);
             Debug.Log("box center: " + this.mediator.bounds.center);
             Debug.Log("box size: " + this.mediator.bounds.size);
-            Debug.Log("mesh box center: " + mesh.bounds.center);
-            Debug.Log("mesh box size: " + mesh.bounds.size);
+            Debug.Log("spawn box center: " + spawnBounds.center);
+            Debug.Log("spawn box min: " + spawnBounds.min);
+            Debug.Log("spawn box max: " + spawnBounds.max);
+            Debug.Log("spawn box extends: " + spawnBounds.extents);
+            Debug.Log("spawn box size: " + spawnBounds.size);
+            Debug.Log("spawn mesh box center: " + mesh.bounds.center);
+            Debug.Log("spawn mesh box size: " + mesh.bounds.size);
 
-            
-            float distX = mesh.bounds.extents.x - mesh.bounds.center.x;
-            float distY = mesh.bounds.extents.y - mesh.bounds.center.y;
-            float distZ = mesh.bounds.extents.z - mesh.bounds.center.z;
-            this.spawnObjRadius = Mathf.Sqrt(distX * distX + distY * distY + distZ * distZ);
-            Debug.LogFormat("Spawn Object Radius: {0}", this.spawnObjRadius);
+            //Normalized spawn object position in bounds
+            Vector3 localSpawnCenter = this.spawnObj.transform.position - fireBounds.min;
+            this.normalizedSpawnPosition = new Vector3(
+                localSpawnCenter.x / fireBounds.size.x,
+                localSpawnCenter.y / fireBounds.size.y,
+                localSpawnCenter.z / fireBounds.size.z);
+            Debug.LogFormat("Spawn Object position: {0}", this.normalizedSpawnPosition);
+
+            //Normalized spawn object radius in bounds
+            //Vector3 localSpawnCenter = this.spawnObj.transform.position - fireBounds.min;
+            Vector3 localSpawnExtends = spawnBounds.max - fireBounds.min;
+            Debug.LogFormat("localSpawnExtends: {0}", localSpawnExtends);
+            Vector3 normalizedSpawnExtendsPosition = new Vector3(
+                localSpawnExtends.x / fireBounds.size.x,
+                localSpawnExtends.y / fireBounds.size.y,
+                localSpawnExtends.z / fireBounds.size.z);
+            Debug.LogFormat("normalizedSpawnExtendsPosition: {0}", normalizedSpawnExtendsPosition);
+
+            Vector3 normalizedSpawnExtends = normalizedSpawnExtendsPosition - this.normalizedSpawnPosition;
+            Debug.LogFormat("normalizedSpawnExtends: {0}", normalizedSpawnExtends);
+
+            //this.normalizedSpawnRadius = Mathf.Sqrt(distX * distX + distY * distY + distZ * distZ);
+            this.normalizedSpawnRadius = Mathf.Max(Mathf.Max(normalizedSpawnExtends.x, normalizedSpawnExtends.y), normalizedSpawnExtends.z);
+            Debug.LogFormat("Spawn Object Radius: {0}", this.normalizedSpawnRadius);
 
             numOfVoxels = Mathf.ClosestPowerOfTwo(this.mediator.fluidSimulator3D.m_width);
             voxelsInBounds = GPUVoxelizer.Voxelize(voxelizer, mesh, this.spawnObj.transform, this.mediator.bounds, numOfVoxels, true);
@@ -110,11 +136,11 @@ namespace FluidSim3DProject
         }
 
         public Vector3 GetSpawnCenter() {
-            return this.spawnObj.transform.position;
+            return this.normalizedSpawnPosition;
         }
 
         public float GetSpawnRadius() {
-            return this.spawnObjRadius;
+            return this.normalizedSpawnRadius;
         }
 
 

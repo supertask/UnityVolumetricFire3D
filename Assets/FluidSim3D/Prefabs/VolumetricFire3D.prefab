@@ -129,8 +129,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c424128a9728aa644ae241e8bc8c6e13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnObj: {fileID: 0}
   voxelizer: {fileID: 0}
-  numOfVoxels: 128
+  type: 1
 --- !u!33 &282561957759546011
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -237,8 +238,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3675576913266346490}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.043816805, y: 0.051508486, z: 0.119036436}
-  m_LocalScale: {x: 0.25, y: 0.125, z: 0.25}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4652197732760602067}
   m_Father: {fileID: 400000}
@@ -304,8 +305,6 @@ MonoBehaviour:
   m_reactionDecay: 0.001
   m_reactionExtinguishment: 0.01
   m_velocityDissipation: 0.995
-  m_inputRadius: 0.04
-  m_inputPos: {x: 0.5, y: 0.1, z: 0.5, w: 0}
   m_applyImpulse: {fileID: 7200000, guid: a080c25e6daeb0d4e88fced65f9959ce, type: 3}
   m_applyAdvect: {fileID: 7200000, guid: 411cedf0db0a1904693c77b97afbf915, type: 3}
   m_computeVorticity: {fileID: 7200000, guid: 62b5b102c778bbd4682f63bf0a9bd2fe, type: 3}
@@ -402,8 +401,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8384854110814116985}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.17526722, y: -0.4120679, z: -0.47614574}
-  m_LocalScale: {x: 4, y: 8, z: 4}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4845201439557383862}
   m_RootOrder: 0

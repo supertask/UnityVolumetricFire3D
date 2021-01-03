@@ -9,6 +9,16 @@ RWStructuredBuffer<float3> _Write;
 StructuredBuffer<float3> _Velocity;
 StructuredBuffer<float> _Density, _Temperature;
 
+// The sesition, "30.2.5 Smoke", https://developer.nvidia.com/gpugems/gpugems3/part-v-physics-simulation/chapter-30-real-time-simulation-and-rendering-3d-fluids
+//
+// It says
+// > where P is pressure, m is the molar mass of the gas, g is the acceleration due to gravity,
+// > and R is the universal gas constant. In practice, all of these physical constants can be treated as a single value and
+// > can be tweaked to achieve the desired visual appearance. The value T 0 is the ambient or "room" temperature,
+// > and T represents the temperature values being advected through the flow. z is the normalized upward-direction vector.
+// > The buoyant force should be thought of as an "external" force and
+// > should be added to the velocity field immediately following velocity advection.
+//
 [numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
 void CSMain (int3 id : SV_DispatchThreadID)
 {
