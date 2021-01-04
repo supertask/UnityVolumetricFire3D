@@ -47,6 +47,8 @@ namespace FluidSim3DProject
 
         [SerializeField] MeshVisualType type = MeshVisualType.Voxel;
 
+        private GPUVoxelizer gpuVoxelizer;
+
         private Mesh defaultMesh; //mesh before replacing to voxel meshes
         private Material defaultMaterial; //material before replacing to voxel meshes
 
@@ -98,15 +100,20 @@ namespace FluidSim3DProject
             Debug.LogFormat("Spawn Object Radius: {0}", this.normalizedSpawnRadius);
 
             numOfVoxels = Mathf.ClosestPowerOfTwo(this.mediator.fluidSimulator3D.m_width);
-            voxelsInBounds = GPUVoxelizer.Voxelize(voxelizer, mesh, this.spawnObj.transform, this.mediator.bounds, numOfVoxels, true);
 
-            this.GetComponent<MeshFilter>().sharedMesh = VoxelMesh.Build(voxelsInBounds.GetData(), voxelsInBounds.UnitLength, true);
+            this.gpuVoxelizer = new GPUVoxelizer();
+            this.gpuVoxelizer.InitVoxelization(mesh, this.mediator.bounds, numOfVoxels);
+            this.voxelsInBounds = gpuVoxelizer.Voxelize(voxelizer, mesh, this.spawnObj.transform, true);
 
+            this.GetComponent<MeshFilter>().sharedMesh = VoxelMesh.Build(this.voxelsInBounds.GetData(), this.voxelsInBounds.UnitLength, true);
+
+            Debug.LogFormat("!!!!!!!!!!!!!!!!!!!!! Num of triangles: {0}", mesh.triangles.Length);
         }
 
         
         public void UpdateSpawn () {
-            if (voxelsInBounds == null) return;
+            if (this.voxelsInBounds == null) return;
+
 
             if (type == MeshVisualType.Mesh) {
                 //this.spawnObj.GetComponent<MeshFilter>().sharedMesh = defaultMesh;
@@ -116,14 +123,11 @@ namespace FluidSim3DProject
                 //this.spawnObj.GetComponent<MeshFilter>().sharedMesh = null;
             }
 
-/*
-            voxelsInBounds.Dispose();
-
             var mesh = SampleMesh();
             if (mesh == null) return;
-            Debug.LogFormat("mesh.triangles: {0}", mesh.triangles);
-            voxelsInBounds = GPUVoxelizer.Voxelize(voxelizer, mesh, this.spawnObj.transform, this.mediator.bounds, numOfVoxels, true);
-            */
+            this.voxelsInBounds = gpuVoxelizer.Voxelize(voxelizer, mesh, this.spawnObj.transform, true);
+
+            Debug.LogFormat("Num of triangles: {0}", mesh.triangles.Length);
 
         }
 
@@ -169,11 +173,7 @@ namespace FluidSim3DProject
                 particleBuffer = null;
             }
 
-            if(voxelsInBounds != null)
-            {
-                voxelsInBounds.Dispose();
-                voxelsInBounds = null;
-            }
+            this.gpuVoxelizer.ReleaseAll();
         }
 
     }

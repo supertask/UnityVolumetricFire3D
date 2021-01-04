@@ -187,7 +187,6 @@ namespace FluidSim3DProject
 				m_applyImpulse.SetFloat("_Extinguishment", m_reactionExtinguishment);
 				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Read", buffer[READ]);
 				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Write", buffer[WRITE]);
-				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_VoxelBuffer", voxelData.Buffer);
 				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Reaction", m_reaction[READ]);
 				m_applyImpulse.Dispatch(extinguishmentKernel.Index,
 					(int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);

@@ -2,6 +2,7 @@
 #pragma kernel SurfaceBack
 #pragma kernel Volume
 #pragma kernel BuildTexture3D
+#pragma kernel ResetVoxels
 
 #define THREAD_1D_X 128
 #define THREAD_2D_X 32
@@ -360,4 +361,25 @@ void BuildTexture3D (uint3 id : SV_DispatchThreadID)
     uint vid = get_voxel_index(x, y, z);
     Voxel v = _VoxelBuffer[vid];
     _VoxelTexture[id] = lerp(float4(0, 0, 0, 0), _ColorTexture.SampleLevel(_LinearRepeat, v.uv, 0), v.fill ? 1.0 : 0.0);
+}
+
+
+[numthreads(THREAD_3D_X, THREAD_3D_Y, THREAD_3D_Z)]
+void ResetVoxels(uint3 id : SV_DispatchThreadID)
+{
+    int x = (int)id.x;
+    int y = (int)id.y;
+    int z = (int)id.z;
+
+    if(x >= _Width) return;
+    if(y >= _Height) return;
+    if(z >= _Depth) return;
+
+    uint vid = get_voxel_index(x, y, z);
+    Voxel voxel = _VoxelBuffer[vid];
+    voxel.position = float3(0,0,0);
+    voxel.uv = float2(0, 0);
+    voxel.front = false;
+    voxel.fill = false;
+    _VoxelBuffer[vid] = voxel;
 }
