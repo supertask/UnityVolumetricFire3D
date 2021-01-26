@@ -1,5 +1,6 @@
 # Unity Volumetric Fire 3D
 3D volumetric fire on Unity. This is under construction now.
+https://vimeo.com/user90335829
 
 ![fire](./images/UnityVolumetricFire3D.gif)
 
@@ -7,7 +8,7 @@
 ## Env
 
 - Windows 10
-- RTX 2070
+- RTX 3070
 
 ## References
 
