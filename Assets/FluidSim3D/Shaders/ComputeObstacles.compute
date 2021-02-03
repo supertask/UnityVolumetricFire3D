@@ -1,10 +1,15 @@
-#pragma kernel Init
-#pragma kernel CSMain
+#pragma kernel ResetObstacle
+#pragma kernel UpdatObstacle
+
 #define NUM_THREADS 8
 
-float4 _Size; //bounds size
+#include "../../Packages/Voxelizer/Shaders/Voxel.cginc"
+
+float _Radius;
+float4 _ObjectPosition, _Size; //bounds size
 //int _Width, _Height, _Depth; //num of voxels
 
+StructuredBuffer<Voxel> _VoxelBuffer;
 //StructuredBuffer<float> _Voxels;
 RWStructuredBuffer<float> _Write;
 
@@ -13,7 +18,7 @@ RWStructuredBuffer<float> _Write;
 }*/
 
 [numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
-void Init (int3 id : SV_DispatchThreadID)
+void ResetObstacle (int3 id : SV_DispatchThreadID)
 {
     int idx = id.x + id.y*_Size.x + id.z*_Size.x*_Size.y;
     float obstacle = 0;
@@ -21,7 +26,7 @@ void Init (int3 id : SV_DispatchThreadID)
 }
 
 [numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
-void CSMain (int3 id : SV_DispatchThreadID)
+void UpdatObstacle (int3 id : SV_DispatchThreadID)
 {
 
     int idx = id.x + id.y*_Size.x + id.z*_Size.x*_Size.y;
@@ -36,6 +41,20 @@ void CSMain (int3 id : SV_DispatchThreadID)
     
     if(id.z-1 < 0) obstacle = 1;
     if(id.z+1 > (int)_Size.z-1) obstacle = 1;
+
+    if (_VoxelBuffer[idx].fill > 0.1) obstacle = 1;
+
+    //
+    // Test
+    //
+    /*
+    float3 pos = id/(_Size.xyz-1.0f) - _ObjectPosition.xyz;
+	float mag = pos.x*pos.x + pos.y*pos.y + pos.z*pos.z;
+	float rad2 = _Radius*_Radius;
+	float gaussDistribution = exp(-mag/rad2);
+    if (gaussDistribution > 0.5) obstacle = 1;
+    */
+
     
     _Write[idx] = obstacle;
 }

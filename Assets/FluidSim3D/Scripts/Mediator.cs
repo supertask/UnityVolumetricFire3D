@@ -9,9 +9,11 @@ namespace FluidSim3DProject
 
         public FireFluidSim fluidSimulator3D;
         public GameObject spawnsObj;
+        public GameObject obstaclesObj;
         public Volumetric volumetric;
 
         [HideInInspector] public List<Spawn> spawns;
+        [HideInInspector] public List<Obstacle> obstacles;
         [HideInInspector] public Bounds bounds;
         //private List<Velocity> spawnVelocities;
 
@@ -22,6 +24,9 @@ namespace FluidSim3DProject
             foreach(Spawn spawn in spawns) {
                 spawn.InitSpawn(); //set voxels
             }
+            foreach(Obstacle obstacle in obstacles) {
+                obstacle.InitObstacle(); //set voxels
+            }
             this.fluidSimulator3D.Init(); //Initialize fire fluid
 			this.volumetric.SetParametersOnMaterial();
         }
@@ -29,6 +34,10 @@ namespace FluidSim3DProject
         void initColleagues() {
             if (spawnsObj == null) {
                 Debug.LogError("Can't find spawns gameObject.");
+                return;
+            }
+            if (obstaclesObj == null) {
+                Debug.LogError("Can't find obstacles gameObject.");
                 return;
             }
             if (fluidSimulator3D == null) {
@@ -40,10 +49,17 @@ namespace FluidSim3DProject
                 return;
             }
             foreach(Transform spawnTransform in spawnsObj.transform) {
-                if (spawnTransform.gameObject.GetComponent<Spawn>() != null) {
-                    Spawn spawn = spawnTransform.gameObject.GetComponent<Spawn>();
+                Spawn spawn = spawnTransform.gameObject.GetComponent<Spawn>();
+                if (spawn != null) {
                     spawn.SetMediator(this);
                     this.spawns.Add(spawn);
+                }
+            }
+            foreach(Transform obstacleTransform in obstaclesObj.transform) {
+                Obstacle obstacle = obstacleTransform.gameObject.GetComponent<Obstacle>();
+                if (obstacle != null) {
+                    obstacle.SetMediator(this);
+                    this.obstacles.Add(obstacle);
                 }
             }
             this.fluidSimulator3D.SetMediator(this);
@@ -53,6 +69,9 @@ namespace FluidSim3DProject
         void Update() {
             foreach(Spawn spawn in spawns) {
                 spawn.UpdateSpawn();
+            }
+            foreach(Obstacle obstacle in obstacles) {
+                obstacle.UpdateObstacle();
             }
             this.fluidSimulator3D.Simulate(); //Simulate fire fluid
 			this.volumetric.SetParametersOnMaterial();

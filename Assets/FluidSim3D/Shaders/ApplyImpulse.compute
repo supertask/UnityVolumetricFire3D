@@ -1,3 +1,5 @@
+#pragma kernel GaussImpulse
+#pragma kernel ExtinguishmentImpluse
 
 #define NUM_THREADS 8
 
@@ -10,8 +12,6 @@ RWStructuredBuffer<float> _Write;
 StructuredBuffer<Voxel> _VoxelBuffer;
 StructuredBuffer<float> _Read, _Reaction;
 
-#pragma kernel GaussImpulse
-#pragma kernel ExtinguishmentImpluse
 
 [numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
 void GaussImpulse(uint3 id : SV_DispatchThreadID)

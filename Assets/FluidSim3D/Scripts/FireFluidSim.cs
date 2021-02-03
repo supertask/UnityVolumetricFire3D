@@ -125,8 +125,7 @@ namespace FluidSim3DProject
 			
 			//Any areas that are obstacles need to be masked of in the obstacle buffer
 			//At the moment is only the border around the edge of the buffers to enforce non-slip boundary conditions
-			ComputeObstacles();
-		
+			//ComputeObstacles();
 		}
 
 		public void SetMediator(Mediator mediator) {
@@ -142,10 +141,20 @@ namespace FluidSim3DProject
 		
 		void ComputeObstacles()
 		{
-			var obstacleInitKernel = new Kernel(m_computeObstacles, "CSMain");
-			m_computeObstacles.SetVector("_Size", m_size);
-			m_computeObstacles.SetBuffer(obstacleInitKernel.Index, "_Write", m_obstacles);
-			m_computeObstacles.Dispatch(obstacleInitKernel.Index, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
+			var obstacleResetKernel = new Kernel(m_computeObstacles, "ResetObstacle");
+			m_computeObstacles.SetBuffer(obstacleResetKernel.Index, "_Write", m_obstacles);
+			m_computeObstacles.Dispatch(obstacleResetKernel.Index, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
+
+			var obstacleUpdateKernel = new Kernel(m_computeObstacles, "UpdatObstacle");
+			foreach (Obstacle obstacle in this.mediator.obstacles) {
+				GPUVoxelData voxelData = obstacle.GetGPUVoxelData();
+				m_computeObstacles.SetVector("_Size", m_size);
+				m_computeObstacles.SetFloat("_Radius", obstacle.GetObjectRadius());
+				m_computeObstacles.SetVector("_ObjectPosition", obstacle.GetObjectCenter());
+				m_computeObstacles.SetBuffer(obstacleUpdateKernel.Index, "_VoxelBuffer", voxelData.Buffer);
+				m_computeObstacles.SetBuffer(obstacleUpdateKernel.Index, "_Write", m_obstacles);
+				m_computeObstacles.Dispatch(obstacleUpdateKernel.Index, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
+			}
 		}
 		
 		void ApplyImpulse(float dt, float amount, ComputeBuffer[] buffer)
@@ -158,13 +167,13 @@ namespace FluidSim3DProject
 				m_applyImpulse.SetVector("_Size", m_size);
 				m_applyImpulse.SetFloat("_Amount", amount);
 				m_applyImpulse.SetFloat("_DeltaTime", dt);
-				m_applyImpulse.SetFloat("_Radius", spawn.GetSpawnRadius());
-				m_applyImpulse.SetVector("_ObjectPosition", spawn.GetSpawnCenter());
+				m_applyImpulse.SetFloat("_Radius", spawn.GetObjectRadius());
+				m_applyImpulse.SetVector("_ObjectPosition", spawn.GetObjectCenter());
 				//m_applyImpulse.SetFloat("_Radius", 0.04f);
 				//m_applyImpulse.SetVector("_ObjectPosition", new Vector4(0.5f,0.1f,0.5f,0.0f));
+				m_applyImpulse.SetBuffer(impulseKernel.Index, "_VoxelBuffer", voxelData.Buffer);
 				m_applyImpulse.SetBuffer(impulseKernel.Index, "_Read", buffer[READ]);
 				m_applyImpulse.SetBuffer(impulseKernel.Index, "_Write", buffer[WRITE]);
-				m_applyImpulse.SetBuffer(impulseKernel.Index, "_VoxelBuffer", voxelData.Buffer);
 				m_applyImpulse.Dispatch(impulseKernel.Index,
 					(int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
 			}
@@ -182,8 +191,8 @@ namespace FluidSim3DProject
 				m_applyImpulse.SetVector("_Size", m_size);
 				m_applyImpulse.SetFloat("_Amount", amount);
 				m_applyImpulse.SetFloat("_DeltaTime", dt);
-				m_applyImpulse.SetVector("_ObjectPosition", spawn.GetSpawnCenter());
-				m_applyImpulse.SetFloat("_Radius", spawn.GetSpawnRadius());
+				m_applyImpulse.SetVector("_ObjectPosition", spawn.GetObjectCenter());
+				m_applyImpulse.SetFloat("_Radius", spawn.GetObjectRadius());
 				m_applyImpulse.SetFloat("_Extinguishment", m_reactionExtinguishment);
 				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Read", buffer[READ]);
 				m_applyImpulse.SetBuffer(extinguishmentKernel.Index, "_Write", buffer[WRITE]);
@@ -373,6 +382,8 @@ namespace FluidSim3DProject
 		{
 			
 			float dt = TIME_STEP;
+
+			ComputeObstacles();
 			
 			//First off advect any buffers that contain physical quantities like density or temperature by the 
 			//velocity field. Advection is what moves values around.
