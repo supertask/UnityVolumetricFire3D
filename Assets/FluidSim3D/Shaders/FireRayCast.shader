@@ -223,7 +223,7 @@ Shader "3DFluidSim/FireRayCast"
 				
 			}
 
-			//Convert from world position to uvw
+			// Convert World position to UVW position
             float3 convertFromWorldPosToUVW(float3 rayWorldPos) {
 				float3 rayUVWPos = (rayWorldPos - _BoundingPosition + 0.5*_BoundingScale)/_BoundingScale;
 				return rayUVWPos;
@@ -263,10 +263,15 @@ Shader "3DFluidSim/FireRayCast"
                 float density = (shapeFBM + _DensityOffset * .1) * fluidSimulatedDensity;
 */
                 float density = _DensityOffset * .1 * fluidSimulatedDensity;
-
-
 				return density;
 				//return shapeFBM;
+			}
+
+			float samplePhysicalQuantity(StructuredBuffer<float> buffer, float3 rayWorldPos, BoundingBox boundingBox) {
+				float3 rayUVWPos = convertFromWorldPosToUVW(rayWorldPos);
+				float sampledPhysicalQuantity = SampleBilinear(buffer, rayUVWPos, _Size);
+                float physicalQuantity = _DensityOffset * .1 * sampledPhysicalQuantity;
+				return physicalQuantity;
 			}
 
 			// Calculate proportion of light that reaches the given point from the lightsource
@@ -282,8 +287,6 @@ Shader "3DFluidSim/FireRayCast"
             //    float3 uvw = (size * .5 + rayPos) * baseScale * scale;
 			//
             float lightmarch(float3 rayWorldPosFromCamera, BoundingBox boundingBox) {
-                //float3 dirToLight = _WorldSpaceLightPos0.xyz;
-                //float dstInsideBox = rayBoxDst(boundsMin, boundsMax, rayWorldPosFromCamera, 1/dirToLight).y;
 				Ray rayTowardsLight; //Ray from cloud particle position to light position.
 				rayTowardsLight.origin = rayWorldPosFromCamera;
 				rayTowardsLight.dir = _WorldSpaceLightPos0.xyz;
@@ -298,12 +301,32 @@ Shader "3DFluidSim/FireRayCast"
 					float density = sampleDensity(lightRayPos, boundingBox);
                     totalDensity += max(0, density * stepSize);
                 }
-				//return totalDensity > 0 ? 0 : 1;
-
                 float transmittance = exp(-totalDensity * _LightAbsorptionTowardSun);
                 return _DarknessThreshold + transmittance * (1-_DarknessThreshold);
             }
+
+			float lightmarch2(StructuredBuffer<float> buffer, float3 rayWorldPosFromCamera,
+					BoundingBox boundingBox) {
+				Ray rayTowardsLight; //Ray from cloud particle position to light position.
+				rayTowardsLight.origin = rayWorldPosFromCamera;
+				rayTowardsLight.dir = _WorldSpaceLightPos0.xyz;
+				float dstInsideBox = rayBoundsDistance(rayTowardsLight, boundingBox).y; //Confirmed!!!
+                
+                float stepSize = dstInsideBox/RAY_STEPS_TO_LIGHT;
+                float totalDensity = 0;
+
+				float3 lightRayPos = rayTowardsLight.origin;
+                for (int step = 0; step < RAY_STEPS_TO_LIGHT; step ++) {
+                    lightRayPos += rayTowardsLight.dir * stepSize;
+					float density = samplePhysicalQuantity(buffer, lightRayPos, boundingBox);
+                    totalDensity += max(0, density * stepSize);
+                }
+                float transmittance = exp(-totalDensity * _LightAbsorptionTowardSun);
+                return _DarknessThreshold + transmittance * (1-_DarknessThreshold);
+			}
 			
+
+
 			float4 frag(v2f IN) : COLOR
 			{
 				float2 screenUV = (IN.screenPos.xy / IN.screenPos.z) * 0.5f + 0.5f;
@@ -369,17 +392,15 @@ Shader "3DFluidSim/FireRayCast"
    				for(int i=0; i < RAY_STEPS_TO_FLUID; i++, dstTravelled += stepSize) {
 					rayPos = entryPoint + ray.dir * dstTravelled;
 
-					//Convert World position to UVW position
-					//float3 rayPosOnUVW = (rayPos - _BoundingPosition + 0.5*_BoundingScale)/_BoundingScale;
-					//rayPosOnUVW = (rayPosOnUVW - _BoundingPosition) * _BoundingScale + float3(0.5, 0.5, 0.5);
+					float density = samplePhysicalQuantity(_Density, rayPos, boundingBox);
+					//float reaction = samplePhysicalQuantity(_Reaction, rayPos, boundingBox);
 
-					float density = sampleDensity(rayPos, boundingBox);
    					//float reaction = SampleBilinear(_Reaction, rayPosOnUVW, _Size);
         			//smokeTransmittance *= 1.0-saturate(density*stepSize*_SmokeAbsorption);
         			//fireTransmittance *= 1.0-saturate(reaction*stepSize*_FireAbsorption);
 
 					if (density > 0) {
-						float lightTransmittance = lightmarch(rayPos, boundingBox);
+						float lightTransmittance = lightmarch2(_Density, rayPos, boundingBox);
                         lightEnergy += density * stepSize * smokeTransmittance * lightTransmittance * phaseVal; //Not confirmed.....
                         smokeTransmittance *= exp(-density * stepSize * _LightAbsorptionThroughCloud); //Confirmed!!
 						//if not very dense, most light makes it through
