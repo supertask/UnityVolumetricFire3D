@@ -517,6 +517,7 @@ GameObject:
   - component: {fileID: 5364715667140873839}
   - component: {fileID: 4394664922896998462}
   - component: {fileID: 2306561993015533472}
+  - component: {fileID: 8694684028525567128}
   m_Layer: 0
   m_Name: FireShader
   m_TagString: Untagged
@@ -620,6 +621,83 @@ MonoBehaviour:
   exitPointObj: {fileID: 0}
   rayObjs: []
   lightRayObjs: []
+--- !u!114 &8694684028525567128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384854110814116985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 325bb27cc5d99694eaaebc8d62def5fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gradients:
+  - serializedVersion: 2
+    key0: {r: 0, g: 0, b: 0, a: 1}
+    key1: {r: 0.9296404, g: 1, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 4626
+    ctime2: 35466
+    ctime3: 24479
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 3
+    m_NumAlphaKeys: 2
+  - serializedVersion: 2
+    key0: {r: 0, g: 0, b: 0, a: 1}
+    key1: {r: 1, g: 0.03761356, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 9445
+    ctime1: 16577
+    ctime2: 24479
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 3
+    m_NumAlphaKeys: 2
+  renderTextures: []
+  wrapMode: 1
+  filterMode: 1
+  anisoLevel: 1
+  resolution: 256
+  propertyName: 
+  useSharedMaterial: 0
+  globalName: 
 --- !u!1 &9112801197552404237
 GameObject:
   m_ObjectHideFlags: 0

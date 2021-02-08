@@ -10,7 +10,8 @@ Shader "3DFluidSim/FireRayCast"
 		_FireGradient("FireGradient", 2D) = "red" {}
 		_SmokeGradient("SmokeGradient", 2D) = "white" {}
 
-		_SmokeColor("SmokeColor", Color) = (1,1,1,1)
+		_SmokeColor("SmokeColor", Color) = (1, 1, 1, 1)
+		_FireColor("FireColor", Color) = (1, 0.594, 0.282, 1)
 		
 		//_SmokeAbsorption("SmokeAbsorbtion", float) = 60.0
 		//_FireAbsorption("FireAbsorbtion", float) = 40.0
@@ -101,6 +102,7 @@ Shader "3DFluidSim/FireRayCast"
 			float3 boundsMax;
 			float3 boundsMin;
 			float4 _SmokeColor;
+			float4 _FireColor;
 
 			//Textures
             Texture3D<float4> NoiseTex;
@@ -380,10 +382,12 @@ Shader "3DFluidSim/FireRayCast"
 				//dstLimit is problem!!!
 
 				float lightEnergy = 0;
+				float lightEnergyForFire = 0;
 			    float fireTransmittance = 1.0, smokeTransmittance = 1.0;
 				float dstLimit = dstInsideBox - dstToBox;
 				float dstTravelled = 0.0;
 				//float dstTravelled = randomOffset;
+				float totalReaction = 0.0;
 			
 				//return float4(lightmarch(IN.worldPos, boundingBox), 0,0,1);
 
@@ -393,7 +397,7 @@ Shader "3DFluidSim/FireRayCast"
 					rayPos = entryPoint + ray.dir * dstTravelled;
 
 					float density = samplePhysicalQuantity(_Density, rayPos, boundingBox);
-					//float reaction = samplePhysicalQuantity(_Reaction, rayPos, boundingBox);
+					float reaction = samplePhysicalQuantity(_Reaction, rayPos, boundingBox);
 
    					//float reaction = SampleBilinear(_Reaction, rayPosOnUVW, _Size);
         			//smokeTransmittance *= 1.0-saturate(density*stepSize*_SmokeAbsorption);
@@ -408,25 +412,32 @@ Shader "3DFluidSim/FireRayCast"
 
 						if(smokeTransmittance <= 0.01) break;
 					} 
+					if (reaction > 0) {
+						float lightFireTransmittance = lightmarch2(_Reaction, rayPos, boundingBox);
+						lightEnergyForFire += reaction * stepSize * fireTransmittance * lightFireTransmittance * phaseVal;
+						fireTransmittance *= exp(-reaction * stepSize * _LightAbsorptionThroughCloud );
+
+						if(fireTransmittance <= 0.01) break;
+					}
 
         			//if(fireTransmittance <= 0.01 && smokeTransmittance <= 0.01) break;
 
 					dstTravelled += stepSize;
 			    }
 			    
-			    //float4 smoke = tex2D(_SmokeGradient, float2(smokeTransmittance,0)) * (1.0-smokeTransmittance);
+			    float4 smoke = tex2D(_SmokeGradient, float2(smokeTransmittance,0)) * (1.0-smokeTransmittance);
 			    //float4 fire = tex2D(_FireGradient, float2(fireTransmittance,0)) * (1.0-fireTransmittance);
-				//return fire + smoke;
+
+                //float strength = exp(-totalReaction*0.7);
+			    //float4 fire = tex2D(_FireGradient, float2(strength,0)) * (1.0-strength);
+				//if (strength < 0.95) { return fire; }
 
 				//float3 backgroundCol = _SkyColor * smokeTransmittance; //float4 to float3
-				float3 smokeCol = lightEnergy * blendLikePaint(_LightColor0.rgb, _SmokeColor.rgb);
-
+				float4 smokeCol = float4(lightEnergy * blendLikePaint(_LightColor0.rgb, smoke.xyz), 1.0 - smokeTransmittance);
 				float4 sceneColor = tex2D(_GrabTexture, screenUV);
-				float3 col = sceneColor * smokeTransmittance + smokeCol;
-				//return float4(smokeTransmittance < 1.0 ? 1.0 : 0.0, 0, 0, 1);
 
-				return float4(col, 1.0-smokeTransmittance);
-				//return float4(smokeCol, 1.0-smokeTransmittance);
+				//return lerp(smokeCol, sceneColor, smokeTransmittance) + fire;
+				return _FireColor * lightEnergyForFire;
 			}
 
 
