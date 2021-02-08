@@ -114,6 +114,7 @@ namespace FluidSim3DProject
 			material.SetVector("_BoundingScale", boundingBoxTransform.localScale);
 			material.SetBuffer("_Density", this.mediator.fluidSimulator3D.GetDensity());
 			material.SetBuffer("_Reaction", this.mediator.fluidSimulator3D.GetReaction());
+			material.SetBuffer("_Temperature", this.mediator.fluidSimulator3D.GetTemperature());
 			material.SetVector("_Size", this.mediator.fluidSimulator3D.GetComputeSize());
 
 		}

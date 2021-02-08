@@ -467,6 +467,9 @@ namespace FluidSim3DProject
 		public ComputeBuffer GetReaction() {
 			return this.m_reaction[READ];
 		}
+		public ComputeBuffer GetTemperature() {
+			return this.m_temperature[READ];
+		}
 
 		public Vector4 GetComputeSize() {
 			return this.m_size;

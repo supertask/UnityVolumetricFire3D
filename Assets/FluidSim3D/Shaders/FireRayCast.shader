@@ -98,7 +98,7 @@ Shader "3DFluidSim/FireRayCast"
 			sampler2D _SmokeGradient;
 			float _SmokeAbsorption, _FireAbsorption; //absorption = 吸収
 			uniform float3 _BoundingPosition, _BoundingScale, _Size;
-			StructuredBuffer<float> _Density, _Reaction;
+			StructuredBuffer<float> _Density, _Reaction, _Temperature;
 			float3 boundsMax;
 			float3 boundsMin;
 			float4 _SmokeColor;
@@ -387,7 +387,8 @@ Shader "3DFluidSim/FireRayCast"
 				float dstLimit = dstInsideBox - dstToBox;
 				float dstTravelled = 0.0;
 				//float dstTravelled = randomOffset;
-				float totalReaction = 0.0;
+
+				float debugTemperature = 0.0;
 			
 				//return float4(lightmarch(IN.worldPos, boundingBox), 0,0,1);
 
@@ -398,6 +399,7 @@ Shader "3DFluidSim/FireRayCast"
 
 					float density = samplePhysicalQuantity(_Density, rayPos, boundingBox);
 					float reaction = samplePhysicalQuantity(_Reaction, rayPos, boundingBox);
+					float temperature = samplePhysicalQuantity(_Temperature, rayPos, boundingBox);
 
    					//float reaction = SampleBilinear(_Reaction, rayPosOnUVW, _Size);
         			//smokeTransmittance *= 1.0-saturate(density*stepSize*_SmokeAbsorption);
@@ -419,6 +421,10 @@ Shader "3DFluidSim/FireRayCast"
 
 						if(fireTransmittance <= 0.01) break;
 					}
+					/*
+					if (temperature > 3200.0) {
+						debugTemperature = 1.0;
+					}*/
 
         			//if(fireTransmittance <= 0.01 && smokeTransmittance <= 0.01) break;
 
@@ -427,17 +433,15 @@ Shader "3DFluidSim/FireRayCast"
 			    
 			    float4 smoke = tex2D(_SmokeGradient, float2(smokeTransmittance,0)) * (1.0-smokeTransmittance);
 			    //float4 fire = tex2D(_FireGradient, float2(fireTransmittance,0)) * (1.0-fireTransmittance);
-
-                //float strength = exp(-totalReaction*0.7);
-			    //float4 fire = tex2D(_FireGradient, float2(strength,0)) * (1.0-strength);
-				//if (strength < 0.95) { return fire; }
+			    //float4 fire = tex2D(_FireGradient, float2(fireTransmittance,0)) * (1.0-fireTransmittance);
 
 				//float3 backgroundCol = _SkyColor * smokeTransmittance; //float4 to float3
 				float4 smokeCol = float4(lightEnergy * blendLikePaint(_LightColor0.rgb, smoke.xyz), 1.0 - smokeTransmittance);
 				float4 sceneColor = tex2D(_GrabTexture, screenUV);
+				float4 fireCol = _FireColor * lightEnergyForFire;
 
-				//return lerp(smokeCol, sceneColor, smokeTransmittance) + fire;
-				return _FireColor * lightEnergyForFire;
+				return lerp(smokeCol, sceneColor, smokeTransmittance) + fireCol;
+				//return _FireColor * debugTemperature; 
 			}
 
 

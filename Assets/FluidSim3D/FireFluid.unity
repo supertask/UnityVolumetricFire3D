@@ -271,6 +271,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: skeb (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0e247f561b679e34da5a8fcc839247cc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2101802980887150033, guid: 0e247f561b679e34da5a8fcc839247cc, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -851,12 +855,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 981529412751423329, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 981529412751423329, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 5c3213a55524f3a458cb2c807d40ad3a, type: 2}
+    - target: {fileID: 1266127256919542874, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2292976164161802465, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -945,6 +953,10 @@ PrefabInstance:
       propertyPath: spawnObj
       value: 
       objectReference: {fileID: 207819444}
+    - target: {fileID: 4394664922896998462, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4521150708513128675, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: type
       value: 1
@@ -1043,7 +1055,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_temperatureAmount
-      value: 10
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_vorticityStrength
