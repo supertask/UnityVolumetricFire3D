@@ -107,7 +107,7 @@ namespace FluidSim3DProject
             if (mesh == null) return;
             this.voxelsInBounds = gpuVoxelizer.Voxelize(voxelizer, mesh, this.spawnObj.transform, true);
 
-            Debug.LogFormat("Num of triangles: {0}", mesh.triangles.Length);
+            //Debug.LogFormat("Num of triangles: {0}", mesh.triangles.Length);
 
         }
 

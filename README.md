@@ -2,13 +2,17 @@
 3D volumetric fire on Unity. This is under construction now.
 https://vimeo.com/user90335829
 
-![fire](./images/UnityVolumetricFire3D.gif)
+![Unity Volumetric Fire 3D basic](./images/UnityVolumetricFire3D_1.gif)
+![Unity Volumetric Fire 3D extends](./images/UnityVolumetricFire3D_2.gif)
+
 
 
 ## Env
 
 - Windows 10
 - RTX 3070
+
+if you run with lower graphic card, you have to reduce the parameter, a number of voxels, to 32 or 64.
 
 ## References
 
