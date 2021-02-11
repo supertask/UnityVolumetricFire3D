@@ -132,9 +132,9 @@ namespace VoxelSystem {
         ) {
             this.ResetVoxels(voxelizer);
 
-            Debug.LogFormat("position:{0}", meshPosition);
-            Debug.LogFormat("rotation:{0}", meshRotation);
-            Debug.LogFormat("scale:{0}", meshScale);
+            //Debug.LogFormat("position:{0}", meshPosition);
+            //Debug.LogFormat("rotation:{0}", meshRotation);
+            //Debug.LogFormat("scale:{0}", meshScale);
 
             this.vertBuffer.SetData(mesh.vertices);
             if(mesh.uv.Length > 0) {

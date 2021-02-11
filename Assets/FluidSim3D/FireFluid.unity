@@ -906,13 +906,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient
+      value: 
+      objectReference: {fileID: 8400000, guid: 6c593ae1096adfd46b73e8cbc4821089, type: 2}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: densityOffset
-      value: 1500
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: entryPointObj
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: smokeGradient
+      value: 
+      objectReference: {fileID: 8400000, guid: 21c908ee3e341d74f9b6fadddb195389, type: 2}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: baseBrightness
       value: 1
@@ -922,12 +930,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11700000, guid: 8dde7f0c595d5ff43a79c1442cbcbacb, type: 2}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: reactionOffset
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: darknessThreshold
       value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: rayOffsetStrength
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: temperatureOffset
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: shapeNoiseWeights.x
@@ -940,6 +956,18 @@ PrefabInstance:
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: shapeNoiseWeights.z
       value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: smokeDensityRange.y
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireTemperatureRange.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireTemperatureRange.y
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: lightAbsorptionTowardSun
@@ -1117,6 +1145,14 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8082523063050229471, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: resolution
+      value: 512
+      objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: renderTextures.Array.size
       value: 2
@@ -1151,19 +1187,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: gradients.Array.data[0].ctime0
-      value: 1151
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: gradients.Array.data[0].ctime1
-      value: 6715
+      value: 11319
       objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: gradients.Array.data[0].ctime2
-      value: 14580
+      value: 34149
       objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: gradients.Array.data[0].ctime3
-      value: 17458
+      value: 55252
       objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: gradients.Array.data[0].ctime4
@@ -1174,20 +1210,24 @@ PrefabInstance:
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].ctime6
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: gradients.Array.data[0].key0.a
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: gradients.Array.data[0].key0.b
-      value: 0
+      value: 0.03289426
       objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: gradients.Array.data[0].key0.g
-      value: 0
+      value: 0.09304263
       objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: gradients.Array.data[0].key0.r
-      value: 0
+      value: 0.2264151
       objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: gradients.Array.data[0].key1.a

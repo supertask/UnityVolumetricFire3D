@@ -19,15 +19,21 @@ namespace FluidSim3DProject
 		[Header (HEADER_DECORATION + "Base Shape" + HEADER_DECORATION)]
 		public Texture3D baseShapeNoise;
 		public Vector4 shapeNoiseWeights = new Vector4(1, 0.48f, 0.15f, 0);
-		public float densityOffset = -4.27f;
+		public float densityOffset = 150;
+		public float reactionOffset = 100;
+		public float temperatureOffset = 100;
 		public float cloudScale = 0.6f;
 		//public float densityMultiplier = 1.0f;
 
 		[Header (HEADER_DECORATION + "Fire fluid settings" + HEADER_DECORATION)]
 
+		public RenderTexture fireGradient;
+		public RenderTexture smokeGradient;
 		public Color skyColor;
 		public float fireAbsorption = 40.0f;
 		public float smokeAbsorption = 60.0f;
+		public Vector2 fireTemperatureRange = new Vector2(0.0f, 10000.0f);
+		public Vector2 smokeDensityRange = new Vector2(0.0f, 10000.0f);
 
 		[Header (HEADER_DECORATION + "Lighting" + HEADER_DECORATION)]
 		public float lightAbsorptionTowardSun = 1.21f;
@@ -39,37 +45,12 @@ namespace FluidSim3DProject
 		[Range (0, 10)] public float baseBrightness = 1.0f; //should be 1, maybe
 		[Range (0, 1)] public float phaseFactor = 0.488f;
 
-		[Header (HEADER_DECORATION + "Debug" + HEADER_DECORATION)]
-		public GameObject vertPos;
-		public GameObject entryPointObj;
-		public GameObject exitPointObj;
-		public List<GameObject> rayObjs;
-		public List<GameObject> lightRayObjs;
 
 		private Mediator mediator; //Knows everything
 
 
         //void Start() {
 
-			/*
-            Transform boundingBoxTransform = this.transform.parent;
-			//Debug.Log("_BoundingPosition: " + boundingBoxTransform.localPosition);
-			//Debug.Log("_BoundingScale: " + boundingBoxTransform.localScale);
-			this.rayObjs = new List<GameObject>();
-			for(int i=0; i < 64 + 5; i++) {
-				GameObject obj = Object.Instantiate(vertPos) as GameObject;
-				obj.name = "ray" + i;
-				obj.transform.position = Vector3.zero;
-				this.rayObjs.Add(obj);
-			}
-			for(int i=0; i < 8; i++) {
-				GameObject obj = Object.Instantiate(vertPos) as GameObject;
-				obj.name = "lightRay" + i;
-				obj.transform.position = Vector3.zero;
-				this.lightRayObjs.Add(obj);
-			}
-			Test();
-			*/
         //}
 
 		public void SetMediator(Mediator mediator) {
@@ -80,10 +61,17 @@ namespace FluidSim3DProject
             Transform boundingBoxTransform = this.transform.parent.parent;
             Material material = this.GetComponent<Renderer>().material;
 
+			material.SetTexture ("FireGradient", fireGradient);
+			material.SetTexture ("SmokeGradient", smokeGradient);
+
 			material.SetTexture ("NoiseTex", baseShapeNoise);
 			material.SetVector ("_ShapeNoiseWeights", shapeNoiseWeights);
 			material.SetFloat ("_DensityOffset", densityOffset);
+			material.SetFloat ("_ReactionOffset", reactionOffset);
+			material.SetFloat ("_TemperatureOffset", temperatureOffset);
 			material.SetFloat ("_CloudScale", cloudScale);
+			material.SetVector("_FireTemperatureRange", fireTemperatureRange);
+			material.SetVector("_SmokeDensityRange", smokeDensityRange);
 			//material.SetFloat ("_DensityMultiplier", densityMultiplier);
 			//Debug.Log("noise: " + noiseGen.shapeTexture);
             
