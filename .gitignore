@@ -1,5 +1,7 @@
 *.pcache
 
+.vscode/
+
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
