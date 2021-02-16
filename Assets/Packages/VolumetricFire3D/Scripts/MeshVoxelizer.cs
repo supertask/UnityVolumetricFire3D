@@ -63,16 +63,16 @@ namespace FluidSim3DProject
 
             Bounds fireBounds = this.mediator.bounds;
             Bounds spawnBounds = this.spawnObj.GetComponent<Renderer>().bounds;
-            Debug.Log("box min: " + this.mediator.bounds.min);
-            Debug.Log("box center: " + this.mediator.bounds.center);
-            Debug.Log("box size: " + this.mediator.bounds.size);
-            Debug.Log("spawn box center: " + spawnBounds.center);
-            Debug.Log("spawn box min: " + spawnBounds.min);
-            Debug.Log("spawn box max: " + spawnBounds.max);
-            Debug.Log("spawn box extends: " + spawnBounds.extents);
-            Debug.Log("spawn box size: " + spawnBounds.size);
-            Debug.Log("spawn mesh box center: " + mesh.bounds.center);
-            Debug.Log("spawn mesh box size: " + mesh.bounds.size);
+            //Debug.Log("box min: " + this.mediator.bounds.min);
+            //Debug.Log("box center: " + this.mediator.bounds.center);
+            //Debug.Log("box size: " + this.mediator.bounds.size);
+            //Debug.Log("spawn box center: " + spawnBounds.center);
+            //Debug.Log("spawn box min: " + spawnBounds.min);
+            //Debug.Log("spawn box max: " + spawnBounds.max);
+            //Debug.Log("spawn box extends: " + spawnBounds.extents);
+            //Debug.Log("spawn box size: " + spawnBounds.size);
+            //Debug.Log("spawn mesh box center: " + mesh.bounds.center);
+            //Debug.Log("spawn mesh box size: " + mesh.bounds.size);
 
             this.SetObjectCenter();
             this.SetObjectRadius();
@@ -85,7 +85,7 @@ namespace FluidSim3DProject
 
             this.GetComponent<MeshFilter>().sharedMesh = VoxelMesh.Build(this.voxelsInBounds.GetData(), this.voxelsInBounds.UnitLength, true);
 
-            Debug.LogFormat("!!!!!!!!!!!!!!!!!!!!! Num of triangles: {0}", mesh.triangles.Length);
+            //Debug.LogFormat("!!!!!!!!!!!!!!!!!!!!! Num of triangles: {0}", mesh.triangles.Length);
         }
 
         

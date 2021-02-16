@@ -10,8 +10,8 @@ Shader "3DFluidSim/FireRayCast"
 		_FireGradient("FireGradient", 2D) = "red" {}
 		_SmokeGradient("SmokeGradient", 2D) = "white" {}
 
-		_SmokeColor("SmokeColor", Color) = (1, 1, 1, 1)
-		_FireColor("FireColor", Color) = (1, 0.594, 0.282, 1)
+		//_SmokeColor("SmokeColor", Color) = (1, 1, 1, 1)
+		//_FireColor("FireColor", Color) = (1, 0.594, 0.282, 1)
 		
 		//_SmokeAbsorption("SmokeAbsorbtion", float) = 60.0
 		//_FireAbsorption("FireAbsorbtion", float) = 40.0
@@ -107,14 +107,11 @@ Shader "3DFluidSim/FireRayCast"
 			StructuredBuffer<float> _Density, _Reaction, _Temperature;
 			float3 boundsMax;
 			float3 boundsMin;
-			float4 _SmokeColor;
-			float4 _FireColor;
+			//float4 _SmokeColor;
+			//float4 _FireColor;
+			float _FireIntensity;
 
 			//Textures
-            Texture3D<float4> NoiseTex;
-            Texture2D<float4> BlueNoise;
-			SamplerState samplerNoiseTex;
-			SamplerState samplerBlueNoise;
 			uniform sampler2D _GrabTexture;
 			
 			//Unity provided
@@ -124,12 +121,9 @@ Shader "3DFluidSim/FireRayCast"
 			float _RayOffsetStrength;
 
 			// Shape settings
-			float4 _ShapeNoiseWeights;
 			float4 _PhaseParams;
 			float _DensityOffset;
 			float _ReactionOffset;
-			float _TemperatureOffset;
-			float _CloudScale;
 
 			// Light settings
             float _LightAbsorptionTowardSun;
@@ -242,43 +236,13 @@ Shader "3DFluidSim/FireRayCast"
 				return rayUVWPos;
 			}
 
+			/*
             float sampleDensity(float3 rayWorldPos, BoundingBox boundingBox) {
 				float3 rayUVWPos = convertFromWorldPosToUVW(rayWorldPos);
 				float fluidSimulatedDensity = SampleBilinear(_Density, rayUVWPos, _Size);
-				//return fluidSimulatedDensity;
-
-/*
-				// Calculate falloff at along x/z edges of the cloud container
-                const float containerEdgeFadeDst = 50;
-                float dstFromEdgeX = min(containerEdgeFadeDst,
-						min(rayWorldPos.x - boundingBox.Min.x, boundingBox.Max.x - rayWorldPos.x));
-                float dstFromEdgeZ = min(containerEdgeFadeDst,
-						min(rayWorldPos.z - boundingBox.Min.z, boundingBox.Max.z - rayWorldPos.z));
-                float edgeWeight = min(dstFromEdgeZ,dstFromEdgeX)/containerEdgeFadeDst;
-
-                // Calculate height gradient from weather map
-				float3 boundingBoxSize = boundingBox.Max - boundingBox.Min;
-                float gMin = .2;
-                float gMax = .7;
-                float heightPercent = (rayWorldPos.y - boundingBox.Min.y) / boundingBoxSize.y;
-                float heightGradient = saturate(remap(heightPercent, 0.0, gMin, 0, 1)) * saturate(remap(heightPercent, 1, gMax, 0, 1));
-                heightGradient *= edgeWeight;
-
-                // Calculate base shape density
-				const int mipLevel = 0;
-				const float baseScale = 1.0;
-				float3 uvw = (boundingBoxSize * 0.5 + rayUVWPos) * baseScale * _CloudScale;
-                float4 shapeNoise = NoiseTex.SampleLevel(samplerNoiseTex, uvw, mipLevel);
-				//return shapeNoise.x;
-
-                float4 normalizedShapeWeights = _ShapeNoiseWeights / dot(_ShapeNoiseWeights, 1);
-                float shapeFBM = dot(shapeNoise, normalizedShapeWeights) * heightGradient;
-                float density = (shapeFBM + _DensityOffset * .1) * fluidSimulatedDensity;
-*/
                 float density = _DensityOffset * .1 * fluidSimulatedDensity;
 				return density;
-				//return shapeFBM;
-			}
+			}*/
 
 			float samplePhysicalQuantity(StructuredBuffer<float> buffer,
 					float3 rayWorldPos, BoundingBox boundingBox, float physicalQuantityOffset) {
@@ -301,7 +265,7 @@ Shader "3DFluidSim/FireRayCast"
             //    float3 uvw = (size * .5 + rayPos) * baseScale * scale;
 			//
 			/*
-            float lightmarch(float3 rayWorldPosFromCamera, BoundingBox boundingBox) {
+            float lightmarchBackup(float3 rayWorldPosFromCamera, BoundingBox boundingBox) {
 				Ray rayTowardsLight; //Ray from cloud particle position to light position.
 				rayTowardsLight.origin = rayWorldPosFromCamera;
 				rayTowardsLight.dir = _WorldSpaceLightPos0.xyz;
@@ -321,7 +285,9 @@ Shader "3DFluidSim/FireRayCast"
             }
 			*/
 
-			float lightmarch2(StructuredBuffer<float> buffer, float3 rayWorldPosFromCamera,
+			// 
+			// Ref. Sebastian Lague, Clouds, https://github.com/SebLague/Clouds
+			float lightmarch(StructuredBuffer<float> buffer, float3 rayWorldPosFromCamera,
 					BoundingBox boundingBox, float physicalQuantityOffset) {
 				Ray rayTowardsLight; //Ray from cloud particle position to light position.
 				rayTowardsLight.origin = rayWorldPosFromCamera;
@@ -369,10 +335,6 @@ Shader "3DFluidSim/FireRayCast"
 
 				float3 entryPoint = ray.origin + ray.dir * dstToBox;
     			float3 exitPoint = ray.origin + ray.dir * dstInsideBox;
-    			
-				//float randomOffset = BlueNoise.SampleLevel(samplerBlueNoise, squareUV(screenUV * 30), 0);
-				//randomOffset *= _RayOffsetStrength;
-				//return float4(randomOffset, 0, 0, 1);
 
 				// Phase function makes clouds brighter around sun
                 float cosAngle = dot(ray.dir, _WorldSpaceLightPos0.xyz);
@@ -383,9 +345,8 @@ Shader "3DFluidSim/FireRayCast"
 				//float stepSize = 0.05;
 			    //float3 ds = normalize(exitPoint-entryPoint) * stepSize;
 				//float dstLimit = min(depth-dstToBox, dstInsideBox);
-				//dstLimit is problem!!!
 
-				float lightEnergy = 0;
+				float lightEnergyForSmoke = 0;
 				float lightEnergyForFire = 0;
 			    float fireTransmittance = 1.0, smokeTransmittance = 1.0;
 				float dstLimit = dstInsideBox - dstToBox;
@@ -393,6 +354,7 @@ Shader "3DFluidSim/FireRayCast"
 				//float dstTravelled = randomOffset;
 
 				float normalizedFireTemperature = 1.0;
+				float normalizedSmokeTemperature = 1.0;
 			
 				//while (dstTravelled < dstLimit) {
    				//for(int i=0; i < RAY_STEPS_TO_FLUID; i++, rayPos += ds) {
@@ -401,21 +363,20 @@ Shader "3DFluidSim/FireRayCast"
 
 					float density = samplePhysicalQuantity(_Density, rayPos, boundingBox, _DensityOffset);
 					float reaction = samplePhysicalQuantity(_Reaction, rayPos, boundingBox, _ReactionOffset);
-					float temperature = samplePhysicalQuantity(_Temperature, rayPos, boundingBox, _TemperatureOffset);
-
-        			//smokeTransmittance *= 1.0-saturate(density*stepSize*_SmokeAbsorption);
 
 					if (density > 0) {
-						float lightTransmittance = lightmarch2(_Density, rayPos, boundingBox, _DensityOffset);
-                        lightEnergy += density * stepSize * smokeTransmittance * lightTransmittance * phaseVal; //Not confirmed.....
+						float lightTransmittance = lightmarch(_Density, rayPos, boundingBox, _DensityOffset);
+                        lightEnergyForSmoke += density * stepSize * smokeTransmittance * lightTransmittance * phaseVal; //Not confirmed.....
                         smokeTransmittance *= exp(-density * stepSize * _LightAbsorptionThroughCloud); //Confirmed!!
 						//if not very dense, most light makes it through
 						//if very dense, not much light makes it through
+						normalizedSmokeTemperature *= 1.0-saturate(density * stepSize * 0.5);
 
 						if (smokeTransmittance <= 0.01) break;
+						if (normalizedSmokeTemperature < 0.01) break;
 					} 
 					if (reaction > 0) {
-						float lightFireTransmittance = lightmarch2(_Reaction, rayPos, boundingBox, _DensityOffset);
+						float lightFireTransmittance = lightmarch(_Reaction, rayPos, boundingBox, _DensityOffset);
 						lightEnergyForFire += reaction * stepSize * fireTransmittance * lightFireTransmittance * phaseVal;
 						fireTransmittance *= exp(-reaction * stepSize * _LightAbsorptionThroughCloud );
 
@@ -430,14 +391,10 @@ Shader "3DFluidSim/FireRayCast"
 
 				//float4 fireCol = _FireColor;
 				float4 fireCol = FireGradient.SampleLevel(samplerFireGradient, float2(normalizedFireTemperature, 0), 0);
-				fireCol = fireCol * lightEnergyForFire;
+				fireCol = fireCol * _FireIntensity * lightEnergyForFire * (1 - smokeTransmittance);
 
-			    //float4 smoke = tex2D(_SmokeGradient, float2(smokeTransmittance,0)) * (1.0-smokeTransmittance);
-			    //float4 fire = tex2D(_FireGradient, float2(fireTransmittance,0)) * (1.0-fireTransmittance);
-
-				float4 smoke = SmokeGradient.SampleLevel(samplerSmokeGradient, float2(smokeTransmittance, 0), 0);
-
-				float4 smokeCol = float4(lightEnergy * blendLikePaint(_LightColor0.rgb, smoke.xyz), 1.0 - smokeTransmittance);
+				float4 smoke = SmokeGradient.SampleLevel(samplerSmokeGradient, float2(normalizedSmokeTemperature, 0), 0);
+				float4 smokeCol = float4(lightEnergyForSmoke * blendLikePaint(_LightColor0.rgb, smoke.rgb), 1.0 - smokeTransmittance);
 				float4 sceneColor = tex2D(_GrabTexture, screenUV);
 
 				return lerp(smokeCol, sceneColor, smokeTransmittance) + fireCol;

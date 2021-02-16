@@ -301,7 +301,7 @@ MonoBehaviour:
   m_densityDissipation: 0.999
   m_densityBuoyancy: 1
   m_densityWeight: 0.0125
-  m_temperatureAmount: 10
+  m_temperatureAmount: 200
   m_temperatureDissipation: 0.995
   m_reactionAmount: 1
   m_reactionDecay: 0.001
@@ -517,7 +517,6 @@ GameObject:
   - component: {fileID: 5364715667140873839}
   - component: {fileID: 4394664922896998462}
   - component: {fileID: 2306561993015533472}
-  - component: {fileID: 8694684028525567128}
   m_Layer: 0
   m_Name: FireShader
   m_TagString: Untagged
@@ -600,54 +599,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a9faa1890e7f04fa34f4bcd020471a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blueNoise: {fileID: 2800000, guid: ad46299e02759574289bc472f234dd18, type: 3}
-  rayOffsetStrength: 1
-  baseShapeNoise: {fileID: 0}
-  shapeNoiseWeights: {x: 1, y: 0.48, z: 0.15, w: 0}
-  densityOffset: -4.27
-  cloudScale: 0.6
-  skyColor: {r: 0, g: 0, b: 0, a: 0}
-  fireAbsorption: 40
-  smokeAbsorption: 60
-  lightAbsorptionTowardSun: 1.21
-  lightAbsorptionThroughCloud: 1.13
-  darknessThreshold: 0.15
-  forwardScattering: 0.811
-  backScattering: 0.33
-  baseBrightness: 1
-  phaseFactor: 0.488
-  vertPos: {fileID: 0}
-  entryPointObj: {fileID: 0}
-  exitPointObj: {fileID: 0}
-  rayObjs: []
-  lightRayObjs: []
---- !u!114 &8694684028525567128
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8384854110814116985}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 325bb27cc5d99694eaaebc8d62def5fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  rayOffsetStrength: 0.2
+  densityOffset: 150
+  reactionOffset: 100
   gradients:
   - serializedVersion: 2
-    key0: {r: 0, g: 0, b: 0, a: 1}
-    key1: {r: 0.9296404, g: 1, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
+    key0: {r: 0.2264151, g: 0.09304263, b: 0.03289426, a: 1}
+    key1: {r: 0.65882355, g: 0.25882354, b: 0.078431375, a: 1}
+    key2: {r: 1, g: 0.5921569, b: 0.28235295, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
-    ctime1: 4626
-    ctime2: 35466
-    ctime3: 24479
-    ctime4: 0
+    ctime1: 11319
+    ctime2: 34149
+    ctime3: 55252
+    ctime4: 65535
     ctime5: 0
     ctime6: 0
     ctime7: 0
@@ -660,44 +629,48 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_NumColorKeys: 3
+    m_NumColorKeys: 5
     m_NumAlphaKeys: 2
   - serializedVersion: 2
-    key0: {r: 0, g: 0, b: 0, a: 1}
-    key1: {r: 1, g: 0.03761356, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
+    key0: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 1, g: 0.5921569, b: 0.28235295, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 9445
-    ctime1: 16577
-    ctime2: 24479
-    ctime3: 0
-    ctime4: 0
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 34149
+    ctime3: 38945
+    ctime4: 65535
     ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 0
-    atime3: 0
-    atime4: 0
+    atime2: 65535
+    atime3: 65535
+    atime4: 65535
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_NumColorKeys: 3
+    m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  renderTextures: []
-  wrapMode: 1
-  filterMode: 1
-  anisoLevel: 1
-  resolution: 256
-  propertyName: 
-  useSharedMaterial: 0
-  globalName: 
+  renderTextures:
+  - {fileID: 8400000, guid: 6c593ae1096adfd46b73e8cbc4821089, type: 2}
+  - {fileID: 8400000, guid: 21c908ee3e341d74f9b6fadddb195389, type: 2}
+  fireAbsorption: 40
+  smokeAbsorption: 60
+  lightAbsorptionTowardSun: 0.75
+  lightAbsorptionThroughCloud: 0.84
+  darknessThreshold: 0.33
+  forwardScattering: 0.811
+  backScattering: 0.33
+  baseBrightness: 1
+  phaseFactor: 0.488
 --- !u!1 &9112801197552404237
 GameObject:
   m_ObjectHideFlags: 0

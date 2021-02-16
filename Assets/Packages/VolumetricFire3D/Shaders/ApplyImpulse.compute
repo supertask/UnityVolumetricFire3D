@@ -23,7 +23,7 @@ void GaussImpulse(uint3 id : SV_DispatchThreadID)
 	float gaussDistribution = exp(-mag/rad2);
 
 	float voxelExists = (_VoxelBuffer[idx].fill ? 1.0 : 0.0);
-	float amount = gaussDistribution * voxelExists * _Amount * _DeltaTime; //_Amount = reaction/temperature amount
+	float amount = voxelExists * _Amount * _DeltaTime; //_Amount = reaction/temperature amount
 	//float amount = gaussDistribution * _Amount * _DeltaTime; //_Amount = reaction/temperature amount
 
     _Write[idx] = _Read[idx] + amount;

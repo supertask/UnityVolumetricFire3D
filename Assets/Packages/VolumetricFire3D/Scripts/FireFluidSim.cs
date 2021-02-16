@@ -93,7 +93,7 @@ namespace FluidSim3DProject
 			//Create all the buffers needed
 			
 			int SIZE = m_width*m_height*m_depth;
-			Debug.LogFormat("simulation size: {0}", SIZE);
+			//Debug.LogFormat("simulation size: {0}", SIZE);
 			
 			m_density = new ComputeBuffer[2];
 			m_density[READ] = new ComputeBuffer(SIZE, sizeof(float));

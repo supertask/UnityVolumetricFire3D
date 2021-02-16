@@ -65,20 +65,18 @@ namespace VoxelSystem {
                 this.resolutionWidth = Mathf.CeilToInt(this.voxelBoundsSize .x / this.unit);
                 this.resolutionHeight = Mathf.CeilToInt(this.voxelBoundsSize .y / this.unit);
                 this.resolutionDepth = Mathf.CeilToInt(this.voxelBoundsSize .z / this.unit);
-                Debug.Log("!pow2");
             } else  {
                 this.resolutionWidth = Mathf.ClosestPowerOfTwo((int)(this.voxelBoundsSize .x / this.unit));
                 this.resolutionHeight = Mathf.ClosestPowerOfTwo((int)(this.voxelBoundsSize .y / this.unit));
                 this.resolutionDepth = Mathf.ClosestPowerOfTwo((int)(this.voxelBoundsSize .z / this.unit));
-                Debug.Log("pow2");
             }
-            Debug.LogFormat("w: {0}, h: {1}, d: {2}", this.resolutionWidth, this.resolutionHeight, this.resolutionDepth);
-            Debug.LogFormat("resolution: {0}, this.unit: {1}", resolution, this.unit);
+            //Debug.LogFormat("w: {0}, h: {1}, d: {2}", this.resolutionWidth, this.resolutionHeight, this.resolutionDepth);
+            //Debug.LogFormat("resolution: {0}, this.unit: {1}", resolution, this.unit);
 
 			this.voxelBuffer = new ComputeBuffer(this.resolutionWidth * this.resolutionHeight * this.resolutionDepth,
                     Marshal.SizeOf(typeof(Voxel_t)));
             var voxels = new Voxel_t[this.voxelBuffer.count];
-            Debug.LogFormat("voxels count: {0}", this.voxelBuffer.count);
+            //Debug.LogFormat("voxels count: {0}", this.voxelBuffer.count);
             this.voxelBuffer.SetData(voxels); // initialize voxels explicitly. Takes a lot of times
 
             //

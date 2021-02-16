@@ -273,7 +273,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0e247f561b679e34da5a8fcc839247cc, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2101802980887150033, guid: 0e247f561b679e34da5a8fcc839247cc, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -910,40 +910,72 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8400000, guid: 6c593ae1096adfd46b73e8cbc4821089, type: 2}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: densityOffset
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: entryPointObj
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireIntensity
+      value: 1.58
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: smokeGradient
       value: 
       objectReference: {fileID: 8400000, guid: 21c908ee3e341d74f9b6fadddb195389, type: 2}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: baseBrightness
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: baseShapeNoise
       value: 
       objectReference: {fileID: 11700000, guid: 8dde7f0c595d5ff43a79c1442cbcbacb, type: 2}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: reactionOffset
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: darknessThreshold
-      value: 0.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: rayOffsetStrength
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: temperatureOffset
       value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.ctime0
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.ctime1
+      value: 11319
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.ctime2
+      value: 34149
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.key0.b
+      value: 0.03289426
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.key0.g
+      value: 0.09304263
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.key0.r
+      value: 0.2264151
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.key1.b
+      value: 0.078431375
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.key1.g
+      value: 0.25882354
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.key1.r
+      value: 0.65882355
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.key2.b
+      value: 0.28235295
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.key2.g
+      value: 0.5921569
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireGradient.key2.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: shapeNoiseWeights.x
@@ -970,12 +1002,8 @@ PrefabInstance:
       value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: lightAbsorptionTowardSun
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: lightAbsorptionThroughCloud
-      value: 0.84
+      propertyPath: fireGradient.m_NumColorKeys
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2501526759576778073, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: spawnObj
@@ -1058,48 +1086,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_depth
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_width
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_height
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_densityAmount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_densityBuoyancy
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: spawns.Array.size
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_temperatureAmount
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_vorticityStrength
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_denstyAdvectionType
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_reactionAdvectionType
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_reactionExtinguishment
-      value: 0.01
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5839042879240102210, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_LocalScale.x
@@ -1147,7 +1143,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8082523063050229471, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8694684028525567128, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: resolution
