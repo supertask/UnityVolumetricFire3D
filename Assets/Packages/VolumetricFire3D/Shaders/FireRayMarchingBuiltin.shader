@@ -3,12 +3,12 @@
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 
-Shader "3DFluidSim/FireRayCast" 
+Shader "VolumetricFire3D/Builtin/FireRayMarching" 
 {
 	Properties
 	{
-		_FireGradient("FireGradient", 2D) = "red" {}
-		_SmokeGradient("SmokeGradient", 2D) = "white" {}
+		//_FireGradient("FireGradient", 2D) = "red" {}
+		//_SmokeGradient("SmokeGradient", 2D) = "white" {}
 
 		//_SmokeColor("SmokeColor", Color) = (1, 1, 1, 1)
 		//_FireColor("FireColor", Color) = (1, 0.594, 0.282, 1)
