@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FireRayMarching
-  m_Shader: {fileID: 4800000, guid: 78629eabb252cca4f97d52bfffb12f07, type: 3}
+  m_Shader: {fileID: 4800000, guid: 5bb190bd936c5464d9aede284f4d1378, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0

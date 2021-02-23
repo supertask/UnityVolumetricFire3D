@@ -1,4 +1,4 @@
-﻿Shader "VolumetricFire3D/URP/FireRayMarching"
+﻿Shader "VolumetricFire3D/HDRP/FireRayMarching"
 {
     Properties
     { }
@@ -8,19 +8,19 @@
         Tags {
             "Queue" = "Transparent"
             "RenderType" = "Transparent"
-            "RenderPipeline" = "UniversalRenderPipeline"
+            "RenderPipeline" = "HDRenderPipeline"
         }
-
-        // No culling or depth
-        Cull Off
-        ZWrite Off
-        ZTest Always
-
-        //col.xyz * col.w + backCol.xyz * (1 - col.w)
-        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
+            // No culling or depth
+            Cull Off
+            ZWrite Off
+            ZTest Always 
+
+            //col.xyz * col.w + backCol.xyz * (1 - col.w)
+            Blend SrcAlpha OneMinusSrcAlpha
+
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -33,6 +33,9 @@
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
+            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/Lighting.hlsl"
+            //#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Sky/SkyUtils.hlsl"
+
             #include "./FireRayMarchingCore.hlsl"
 
             ENDHLSL

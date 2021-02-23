@@ -11,8 +11,8 @@ struct Attributes {
 
 struct v2f 
 {
-    float4 pos : SV_POSITION;
-    float3 worldPos : TEXCOORD0;
+    float4 positionCS : SV_POSITION;
+    float3 positionWS : TEXCOORD0;
     float3 screenPos : TEXCOORD1;
     float3 viewVector : TEXCOORD2;
 };
@@ -211,52 +211,35 @@ v2f vert(Attributes v)
     v2f OUT;
 
     #if defined(UNIT_RP__BUILT_IN_RP)
-        OUT.worldPos = mul(unity_ObjectToWorld, v.positionOS).xyz; //world space position
-        OUT.pos = UnityObjectToClipPos(v.positionOS); //clip space position
+        OUT.positionWS = mul(unity_ObjectToWorld, v.positionOS).xyz; //world space position
+        OUT.positionCS = UnityObjectToClipPos(v.positionOS); //clip space position
     #elif defined(UNIT_RP__HDRP) || defined(UNIT_RP__URP)
-        OUT.worldPos = TransformObjectToWorld(v.positionOS); //world space position
-        OUT.pos = TransformWorldToHClip(OUT.worldPos); //clip space position
-        //input.positionVS = TransformWorldToView(input.positionWS);
-        //input.positionCS = TransformWorldToHClip(input.positionWS);
+        OUT.positionWS = TransformObjectToWorld(v.positionOS); //world space position
+        OUT.positionCS = TransformWorldToHClip(OUT.positionWS); //clip space position
     #endif
 
-
+    // Screen position
     //https://gamedev.stackexchange.com/questions/129139/how-do-i-calculate-uv-space-from-world-space-in-the-fragment-shader
-    OUT.screenPos = OUT.pos.xyw;
+    OUT.screenPos = OUT.positionCS.xyw;
     // Correct flip when rendering with a flipped projection matrix.
     // (I've observed this differing between the Unity scene & game views)
     OUT.screenPos.y *= _ProjectionParams.x; //For multi-platform like VR
 
+    /*
+    //
+    // Get view vector
+    //
     // Ref. Clouds
     // Camera space matches OpenGL convention where cam forward is -z. In unity forward is positive z.
     // (https://docs.unity3d.com/ScriptReference/Camera-cameraToWorldMatrix.html)
     float2 screenUV = (OUT.screenPos.xy / OUT.screenPos.z) * 0.5f + 0.5f;
 
-
-    #if defined(UNIT_RP__BUILT_IN_RP)
+    #if defined(UNIT_RP__BUILT_IN_RP) || defined(UNIT_RP__URP)
         float3 viewVector = mul(unity_CameraInvProjection, float4(screenUV * 2 - 1, 0, -1));
         OUT.viewVector = mul(unity_CameraToWorld, float4(viewVector,0));
-    #elif defined(UNIT_RP__HDRP) || defined(UNIT_RP__URP)
-        //float3 viewVector = mul(_InvProjMatrix, float4(screenUV * 2 - 1, 0, -1));
-        OUT.viewVector = GetWorldSpaceViewDir(OUT.worldPos); //mul(unity_CameraToWorld, float4(viewVector,0));
+    #elif defined(UNIT_RP__HDRP)
     #endif
-    //unity_CameraToWorld
-
-    /*
-    #define unity_MatrixV unity_StereoMatrixV[unity_StereoEyeIndex]
-    #define unity_MatrixInvV unity_StereoMatrixInvV[unity_StereoEyeIndex]
-    #define unity_MatrixVP unity_StereoMatrixVP[unity_StereoEyeIndex]
-
-    #define unity_CameraProjection unity_StereoCameraProjection[unity_StereoEyeIndex]
-    #define unity_CameraInvProjection unity_StereoCameraInvProjection[unity_StereoEyeIndex]
-    #define unity_WorldToCamera unity_StereoWorldToCamera[unity_StereoEyeIndex]
-    #define unity_CameraToWorld unity_StereoCameraToWorld[unity_StereoEyeIndex]
-    #define _WorldSpaceCameraPos _WorldSpaceCameraPosStereo[unity_StereoEyeIndex].xyz
-    #define _PrevCamPosRWS _PrevCamPosRWSStereo[unity_StereoEyeIndex].xyz
     */
-
-    //memo
-    //https://light11.hatenadiary.com/entry/2018/06/13/235543
 
     return OUT;
 }
@@ -265,22 +248,23 @@ v2f vert(Attributes v)
 float4 frag(v2f IN) : COLOR
 {
     float2 screenUV = (IN.screenPos.xy / IN.screenPos.z) * 0.5f + 0.5f;
-    float viewLength = length(IN.viewVector);
+    //float viewLength = length(IN.viewVector);
 
     #if defined(UNIT_RP__BUILT_IN_RP)
-        float4 mainLightPosition = _WorldSpaceLightPos0;
-        half4 mainLightColor = _LightColor0;
+        float3 mainLightPosition = _WorldSpaceLightPos0;
+        float3 mainLightColor = _LightColor0;
     #elif defined(UNIT_RP__HDRP)
-        float4 mainLightPosition = LightData.positionRWS;
-        half4 mainLightColor = _MainLightColor;
+        DirectionalLightData light = _DirectionalLightDatas[0];
+        float3 mainLightPosition = -light.forward.xyz;
+        float3 mainLightColor = light.color;
     #elif defined(UNIT_RP__URP)
-        float4 mainLightPosition = _MainLightPosition;
-        half4 mainLightColor = _MainLightColor;
+        float3 mainLightPosition = _MainLightPosition;
+        float3 mainLightColor = _MainLightColor;
     #endif
 
     Ray ray;
     ray.origin = _WorldSpaceCameraPos;
-    ray.dir = normalize(IN.worldPos - _WorldSpaceCameraPos);
+    ray.dir = normalize(IN.positionWS - _WorldSpaceCameraPos);
     
     BoundingBox boundingBox;
     boundingBox.Min = float3(-0.5,-0.5,-0.5)*_BoundingScale + _BoundingPosition;
@@ -395,7 +379,7 @@ float4 frag(v2f IN) : COLOR
     #if defined(UNIT_RP__BUILT_IN_RP)
         float4 sceneColor = tex2D(_GrabTexture, screenUV);
     #elif defined(UNIT_RP__HDRP)
-        float4 sceneColor = SampleCameraColor(screenUV);
+        float4 sceneColor = float4(SampleCameraColor(screenUV), 1.0);
     #elif defined(UNIT_RP__URP)
         float4 sceneColor = tex2D(_CameraOpaqueTexture, screenUV);
     #endif
