@@ -36,7 +36,7 @@
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/Lighting.hlsl"
             //#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Sky/SkyUtils.hlsl"
 
-            #include "./FireRayMarchingCore.hlsl"
+            #include "./FireRayMarching.hlsl"
 
             ENDHLSL
         }

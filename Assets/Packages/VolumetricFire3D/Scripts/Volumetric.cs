@@ -13,9 +13,6 @@ namespace FluidSim3DProject
         //[Header (HEADER_DECORATION + "Core settings" + HEADER_DECORATION)]
         //public FireFluidSim simulator;
 
-        [Header (HEADER_DECORATION + "Marching settings" + HEADER_DECORATION)]
-		public float rayOffsetStrength = 1.0f;
-
 		[Header (HEADER_DECORATION + "Base Shape" + HEADER_DECORATION)]
 		public float densityOffset = 150;
 		public float reactionOffset = 100;
@@ -75,7 +72,6 @@ namespace FluidSim3DProject
 			material.SetVector ("boundsMax", boundingBoxTransform.position + boundingBoxTransform.localScale / 2);
 
 			material.SetVector ("_PhaseParams", new Vector4 (forwardScattering, backScattering, baseBrightness, phaseFactor));
-			material.SetFloat ("_RayOffsetStrength", rayOffsetStrength);
 
 			material.SetFloat("_FireAbsorption", fireAbsorption);
 			material.SetFloat("_SmokeAbsorption", smokeAbsorption);

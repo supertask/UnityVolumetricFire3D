@@ -3,7 +3,7 @@
 #define RAY_STEPS_TO_FLUID 64
 #define RAY_STEPS_TO_LIGHT 8
 
-struct Attributes {
+struct VertexInput {
     float4 positionOS : POSITION; //vertex position in object space
     float3 normal : NORMAL;
     float4 texcoord : TEXCOORD0;
@@ -58,7 +58,6 @@ float _FireIntensity;
 #endif 
 
 // Marching settings
-float _RayOffsetStrength;
 
 // Shape settings
 float4 _PhaseParams;
@@ -205,66 +204,16 @@ float lightmarch(StructuredBuffer<float> buffer, Ray rayTowardsLight,
     return _DarknessThreshold + transmittance * (1-_DarknessThreshold);
 }
 
-
-v2f vert(Attributes v)
-{
-    v2f OUT;
-
-    #if defined(UNIT_RP__BUILT_IN_RP)
-        OUT.positionWS = mul(unity_ObjectToWorld, v.positionOS).xyz; //world space position
-        OUT.positionCS = UnityObjectToClipPos(v.positionOS); //clip space position
-    #elif defined(UNIT_RP__HDRP) || defined(UNIT_RP__URP)
-        OUT.positionWS = TransformObjectToWorld(v.positionOS); //world space position
-        OUT.positionCS = TransformWorldToHClip(OUT.positionWS); //clip space position
-    #endif
-
-    // Screen position
-    //https://gamedev.stackexchange.com/questions/129139/how-do-i-calculate-uv-space-from-world-space-in-the-fragment-shader
-    OUT.screenPos = OUT.positionCS.xyw;
-    // Correct flip when rendering with a flipped projection matrix.
-    // (I've observed this differing between the Unity scene & game views)
-    OUT.screenPos.y *= _ProjectionParams.x; //For multi-platform like VR
-
-    /*
-    //
-    // Get view vector
-    //
-    // Ref. Clouds
-    // Camera space matches OpenGL convention where cam forward is -z. In unity forward is positive z.
-    // (https://docs.unity3d.com/ScriptReference/Camera-cameraToWorldMatrix.html)
-    float2 screenUV = (OUT.screenPos.xy / OUT.screenPos.z) * 0.5f + 0.5f;
-
-    #if defined(UNIT_RP__BUILT_IN_RP) || defined(UNIT_RP__URP)
-        float3 viewVector = mul(unity_CameraInvProjection, float4(screenUV * 2 - 1, 0, -1));
-        OUT.viewVector = mul(unity_CameraToWorld, float4(viewVector,0));
-    #elif defined(UNIT_RP__HDRP)
-    #endif
-    */
-
-    return OUT;
-}
-
-
-float4 frag(v2f IN) : COLOR
-{
-    float2 screenUV = (IN.screenPos.xy / IN.screenPos.z) * 0.5f + 0.5f;
-    //float viewLength = length(IN.viewVector);
-
-    #if defined(UNIT_RP__BUILT_IN_RP)
-        float3 mainLightPosition = _WorldSpaceLightPos0;
-        float3 mainLightColor = _LightColor0;
-    #elif defined(UNIT_RP__HDRP)
-        DirectionalLightData light = _DirectionalLightDatas[0];
-        float3 mainLightPosition = -light.forward.xyz;
-        float3 mainLightColor = light.color;
-    #elif defined(UNIT_RP__URP)
-        float3 mainLightPosition = _MainLightPosition;
-        float3 mainLightColor = _MainLightColor;
-    #endif
+float4 volumetricRayMarching(
+    float3 positionWS,
+    float2 screenUV,
+    float3 mainCameraPos,
+    float3 mainLightPosition,
+    float3 mainLightColor) {
 
     Ray ray;
-    ray.origin = _WorldSpaceCameraPos;
-    ray.dir = normalize(IN.positionWS - _WorldSpaceCameraPos);
+    ray.origin = mainCameraPos;
+    ray.dir = normalize(positionWS - mainCameraPos);
     
     BoundingBox boundingBox;
     boundingBox.Min = float3(-0.5,-0.5,-0.5)*_BoundingScale + _BoundingPosition;
@@ -292,7 +241,9 @@ float4 frag(v2f IN) : COLOR
     //float3 ds = normalize(exitPoint-entryPoint) * stepSize;
     //float dstLimit = min(depth-dstToBox, dstInsideBox);
 
-    float sunLightEneryOnSmoke = 0, sunLightEnergyOnFire = 0, fireLightEnergyOnSmoke = 0;
+    float sunLightEneryOnSmoke = 0.0;
+    float sunLightEnergyOnFire = 0.0;
+    float fireLightEnergyOnSmoke = 0.0;
     float fireTransmittance = 1.0, smokeTransmittanceForSun = 1.0, smokeTransmittanceForFireLight = 1.0;
     float dstLimit = dstInsideBox - dstToBox;
     float dstTravelled = 0.0;
@@ -385,4 +336,6 @@ float4 frag(v2f IN) : COLOR
     #endif
 
     return lerp(smokeCol, sceneColor, smokeTransmittanceForSun) + fireCol;
+
 }
+

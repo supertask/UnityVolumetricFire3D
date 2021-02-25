@@ -31,7 +31,7 @@
             // macros and functions, and also contains #include references to other
             // HLSL files (for example, Common.hlsl, SpaceTransforms.hlsl, etc.).
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"            
-            #include "./FireRayMarchingCore.hlsl"
+            #include "./FireRayMarching.hlsl"
 
             ENDHLSL
         }

@@ -4,3 +4,4 @@ rm -rf Temp
 rm -rf obj
 rm -f *.csproj
 rm -f *.sln
+rm -f .vs/

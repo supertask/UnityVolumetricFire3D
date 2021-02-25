@@ -41,7 +41,7 @@ Shader "VolumetricFire3D/Builtin/FireRayMarching"
 
 			#define UNIT_RP__BUILT_IN_RP
 			#include "UnityCG.cginc"
-			#include "./FireRayMarchingCore.hlsl"
+			#include "./FireRayMarching.hlsl"
 
 			#pragma target 5.0
 			#pragma vertex vert
