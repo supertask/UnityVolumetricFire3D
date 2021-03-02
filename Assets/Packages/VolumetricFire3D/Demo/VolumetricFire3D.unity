@@ -914,10 +914,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: fireIntensity
-      value: 1.58
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: smokeGradient
       value: 
       objectReference: {fileID: 8400000, guid: 21c908ee3e341d74f9b6fadddb195389, type: 2}
@@ -1087,14 +1083,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: spawns.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_denstyAdvectionType
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5626191131645923661, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
-      propertyPath: m_reactionAdvectionType
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5839042879240102210, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}

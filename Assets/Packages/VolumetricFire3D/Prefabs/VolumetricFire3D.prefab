@@ -290,8 +290,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 164869986c15313419bf6ec021c90430, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_denstyAdvectionType: 1
-  m_reactionAdvectionType: 1
+  m_denstyAdvectionType: 3
+  m_reactionAdvectionType: 3
   m_width: 128
   m_height: 128
   m_depth: 128
@@ -671,6 +671,7 @@ MonoBehaviour:
   backScattering: 0.33
   baseBrightness: 1
   phaseFactor: 0.488
+  fireIntensity: 1
 --- !u!1 &9112801197552404237
 GameObject:
   m_ObjectHideFlags: 0
