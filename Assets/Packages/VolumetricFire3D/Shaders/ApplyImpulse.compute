@@ -3,7 +3,7 @@
 
 #define NUM_THREADS 8
 
-#include "../CustomPackages/Voxelizer/Shaders/Voxel.cginc"
+#include "../CustomPackages/Voxelizer/Shaders/Voxel.hlsl"
 
 float _Radius, _Amount, _DeltaTime, _Extinguishment;
 float4 _ObjectPosition, _Size; //size = bounds size

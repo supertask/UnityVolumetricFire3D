@@ -12,8 +12,8 @@
 #define THREAD_3D_Z 8
 
 #include "UnityCG.cginc"
-#include "./Voxel.cginc"
-#include "./Quaternion.cginc"
+#include "./Voxel.hlsl"
+#include "./Quaternion.hlsl"
 
 CBUFFER_START(VoxelParams)
 
