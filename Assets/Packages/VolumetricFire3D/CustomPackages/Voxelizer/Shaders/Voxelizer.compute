@@ -12,8 +12,8 @@
 #define THREAD_3D_Z 8
 
 #include "UnityCG.cginc"
-#include "./Voxel.hlsl"
-#include "./Quaternion.hlsl"
+#include "Assets/Packages/VolumetricFire3D/CustomPackages/Voxelizer/Shaders/Voxel.hlsl"
+#include "Assets/Packages/VolumetricFire3D/CustomPackages/Voxelizer/Shaders/Quaternion.hlsl"
 
 CBUFFER_START(VoxelParams)
 

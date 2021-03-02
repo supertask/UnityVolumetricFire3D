@@ -3,7 +3,7 @@
 
 #define NUM_THREADS 8
 
-#include "../CustomPackages/Voxelizer/Shaders/Voxel.hlsl"
+#include "Assets/Packages/VolumetricFire3D/CustomPackages/Voxelizer/Shaders/Voxel.hlsl"
 
 float _Radius;
 float4 _ObjectPosition, _Size; //bounds size

@@ -39,7 +39,7 @@ Shader "3DFluidSim/FireRayCast"
 
 			CGPROGRAM
 			#include "UnityCG.cginc"
-			#include "./rgb_to_cmyk.hlsl"
+			#include "Assets/Packages/VolumetricFire3D/Shaders/rgb_to_cmyk.hlsl"
 			#pragma target 5.0
 			#pragma vertex vert
 			#pragma fragment frag
