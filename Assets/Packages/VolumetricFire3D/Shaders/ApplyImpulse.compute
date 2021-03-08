@@ -5,8 +5,15 @@
 
 #include "Assets/Packages/VolumetricFire3D/CustomPackages/Voxelizer/Shaders/Voxel.hlsl"
 
+//#include "Assets/Luxe2021/Lib/UGist/Cginc/SimplexNoise.cginc"
+//#include "Packages/jp.keijiro.noiseshader/Shader/ClassicNoise3D.hlsl"
+//#include "Packages/jp.keijiro.noiseshader/Shader/SimplexNoise3D.hlsl"
+
+
 float _Radius, _Amount, _DeltaTime, _Extinguishment;
 float4 _ObjectPosition, _Size; //size = bounds size
+
+float _NoisePercent; // 0 ~ 1
 
 RWStructuredBuffer<float> _Write;
 StructuredBuffer<Voxel> _VoxelBuffer;
@@ -17,10 +24,17 @@ StructuredBuffer<float> _Read, _Reaction;
 void GaussImpulse(uint3 id : SV_DispatchThreadID)
 {
 	int idx = id.x + id.y*_Size.x + id.z*_Size.x*_Size.y;	
-	float3 pos = id/(_Size.xyz-1.0f) - _ObjectPosition.xyz;
-	float mag = pos.x*pos.x + pos.y*pos.y + pos.z*pos.z;
-	float rad2 = _Radius*_Radius;
-	float gaussDistribution = exp(-mag/rad2);
+	float3 voxelPos = float3(id.x, id.y, id.z);
+
+	//float3 pos = id/(_Size.xyz-1.0f) - _ObjectPosition.xyz; //sphere position
+	//float mag = pos.x*pos.x + pos.y*pos.y + pos.z*pos.z;
+	//float rad2 = _Radius*_Radius;
+	//float gaussDistribution = exp(-mag/rad2);
+
+	//float noiseIntensity = 1.0;
+	//float noise = snoise(voxelPos);
+	//noiseIntensity = noise < _NoisePercent ? 1.0 : 0.0;
+	//noiseIntensity = noise;
 
 	float voxelExists = (_VoxelBuffer[idx].fill ? 1.0 : 0.0);
 	float amount = voxelExists * _Amount * _DeltaTime; //_Amount = reaction/temperature amount
@@ -58,15 +72,6 @@ void ExtinguishmentImpluse(uint3 id : SV_DispatchThreadID)
 	
     _Write[idx] = _Read[idx] + amount;
 }
-
-
-
-
-
-
-
-
-
 
 
 

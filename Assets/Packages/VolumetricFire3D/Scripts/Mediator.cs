@@ -49,15 +49,17 @@ namespace FluidSim3DProject
                 return;
             }
             foreach(Transform spawnTransform in spawnsObj.transform) {
+                GameObject spawnObj = spawnTransform.gameObject;
                 Spawn spawn = spawnTransform.gameObject.GetComponent<Spawn>();
-                if (spawn != null) {
+                if (spawnObj.activeSelf != null && spawn != null) {
                     spawn.SetMediator(this);
                     this.spawns.Add(spawn);
                 }
             }
             foreach(Transform obstacleTransform in obstaclesObj.transform) {
-                Obstacle obstacle = obstacleTransform.gameObject.GetComponent<Obstacle>();
-                if (obstacle != null) {
+                GameObject obstacleObj = obstacleTransform.gameObject;
+                Obstacle obstacle = obstacleObj.GetComponent<Obstacle>();
+                if (obstacleObj.activeSelf && obstacle != null) {
                     obstacle.SetMediator(this);
                     this.obstacles.Add(obstacle);
                 }

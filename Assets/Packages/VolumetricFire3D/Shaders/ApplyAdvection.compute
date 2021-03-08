@@ -32,6 +32,8 @@ float3 GetAdvectedPosTexCoords(float3 pos, int idx)
     return pos;
 }
 
+// backTrace. 前の粒子の場所を取得する用に使っている
+// https://docs.google.com/presentation/d/1hpwJzgji7mFtd7Tc_7ddBMf1L2rPQG9Xw1MnSCv7ZsA/edit#slide=id.g2428e147e5_3_44
 float SampleBilinear(StructuredBuffer<float> buffer, float3 uv, float3 size)
 {
 	int x = uv.x;

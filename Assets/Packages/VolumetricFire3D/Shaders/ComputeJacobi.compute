@@ -8,6 +8,10 @@ RWStructuredBuffer<float> _Write;
 StructuredBuffer<float> _Pressure, _Obstacles;
 StructuredBuffer<float3> _Divergence;
 
+//爆発するときはここが強すぎる
+//エラーが多すぎると爆発する。
+//
+//ほかにもSolverが一応ある. jacobi はGPUで計算するときに使われることがおおい
 [numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
 void CSMain (int3 id : SV_DispatchThreadID)
 {

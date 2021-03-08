@@ -7,6 +7,8 @@ namespace FluidSim3DProject
 {
 	public class FireFluidSim : MonoBehaviour
 	{
+		public const string HEADER_DECORATION = " --- ";
+
 		//DONT CHANGE THESE
 		const int READ = 0;
 		const int WRITE = 1;
@@ -56,14 +58,32 @@ namespace FluidSim3DProject
 		public float m_temperatureAmount = 10.0f;
 		public float m_temperatureDissipation = 0.995f;
 		public float m_reactionAmount = 1.0f;
+
+
+		//炎が強すぎたときにここを多くする
 		public float m_reactionDecay = 0.001f;
 		public float m_reactionExtinguishment = 0.01f;
+
 		public float m_velocityDissipation = 0.995f;
 		
 
 		// 周囲の温度, 周囲の温度が浮力に影響を及ぼす
 		float m_ambientTemperature = 0.0f;
+
+
+		[Header (HEADER_DECORATION + "Obstacles" + HEADER_DECORATION)]
+		public bool m_wallLeft = true;
+		public bool m_wallRight = true;
+		public bool m_wallUp = true;
+		public bool m_wallDown = true;
+		public bool m_wallFront = true;
+		public bool m_wallBack = true;
+
+		[Header (HEADER_DECORATION + "Fire noise" + HEADER_DECORATION)]
+		public float m_noisePercent = 1.0f;
 		
+
+		[Header (HEADER_DECORATION + "Compute Shaders" + HEADER_DECORATION)]
 		public ComputeShader m_applyImpulse, m_applyAdvect, m_computeVorticity;
 		public ComputeShader m_computeDivergence, m_computeJacobi, m_computeProjection;
 		public ComputeShader m_computeConfinement, m_computeObstacles, m_applyBuoyancy;
@@ -72,6 +92,7 @@ namespace FluidSim3DProject
 		ComputeBuffer[] m_density, m_velocity, m_pressure, m_temperature, m_phi, m_reaction;
 		ComputeBuffer m_temp3f, m_obstacles;
 
+		//Additional from Scrawk's simulation
 		private Mediator mediator; //Knows everything
 
 		static class ShaderIDs
@@ -151,6 +172,13 @@ namespace FluidSim3DProject
 				m_computeObstacles.SetVector("_Size", m_size);
 				m_computeObstacles.SetFloat("_Radius", obstacle.GetObjectRadius());
 				m_computeObstacles.SetVector("_ObjectPosition", obstacle.GetObjectCenter());
+				m_computeObstacles.SetBool("_WallLeft", m_wallLeft);
+				m_computeObstacles.SetBool("_WallRight", m_wallRight);
+				m_computeObstacles.SetBool("_WallUp", m_wallUp);
+				m_computeObstacles.SetBool("_WallDown", m_wallDown);
+				m_computeObstacles.SetBool("_WallFront", m_wallFront);
+				m_computeObstacles.SetBool("_WallBack", m_wallBack);
+
 				m_computeObstacles.SetBuffer(obstacleUpdateKernel.Index, "_VoxelBuffer", voxelData.Buffer);
 				m_computeObstacles.SetBuffer(obstacleUpdateKernel.Index, "_Write", m_obstacles);
 				m_computeObstacles.Dispatch(obstacleUpdateKernel.Index, (int)m_size.x/NUM_THREADS, (int)m_size.y/NUM_THREADS, (int)m_size.z/NUM_THREADS);
@@ -163,8 +191,10 @@ namespace FluidSim3DProject
 			var impulseKernel = new Kernel(m_applyImpulse, "GaussImpulse");
 			foreach (Spawn spawn in this.mediator.spawns) {
 				GPUVoxelData voxelData = spawn.GetGPUVoxelData();
+				if (voxelData == null) { continue; }
 
 				m_applyImpulse.SetVector("_Size", m_size);
+				m_applyImpulse.SetFloat("_NoisePercent", m_noisePercent);
 				m_applyImpulse.SetFloat("_Amount", amount);
 				m_applyImpulse.SetFloat("_DeltaTime", dt);
 				m_applyImpulse.SetFloat("_Radius", spawn.GetObjectRadius());
@@ -187,6 +217,7 @@ namespace FluidSim3DProject
 			var extinguishmentKernel = new Kernel(m_applyImpulse, "ExtinguishmentImpluse");
 			foreach (Spawn spawn in this.mediator.spawns) {
 				GPUVoxelData voxelData = spawn.GetGPUVoxelData();
+				if (voxelData == null) { continue; }
 
 				m_applyImpulse.SetVector("_Size", m_size);
 				m_applyImpulse.SetFloat("_Amount", amount);
