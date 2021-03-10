@@ -1,7 +1,7 @@
 ﻿#include "./rgb_to_cmyk.hlsl"
 
 #define RAY_STEPS_TO_FLUID 64
-#define RAY_STEPS_TO_LIGHT 8
+#define RAY_STEPS_TO_LIGHT 6
 
 struct VertexInput {
     float4 positionOS : POSITION; //vertex position in object space
@@ -270,23 +270,7 @@ float4 volumetricRayMarching(
             smokeTransmittanceForSun *= exp(-density * stepSize * _LightAbsorptionThroughCloud);
             //if not very dense, most light makes it through
             //if very dense, not much light makes it through
-
-            /*
-            Ray rayTowardsFireLight;
-            rayTowardsFireLight.origin = rayPos;
-            rayTowardsFireLight.dir = ;
-            float fireLightTransmittance = lightmarch(_Density, rayTowardsFireLight, boundingBox, _DensityOffset);
-            fireLightEnergyOnSmoke += density * stepSize * smokeTransmittanceForFireLight * fireLightTransmittance * phaseVal;
-            smokeTransmittanceForFireLight *= exp(-density * stepSize * _LightAbsorptionThroughCloud);
-            */
-
-            // Temperature(0 ~ 1) for binding temperature with color
-            // Ref. https://github.com/Scrawk/GPU-GEMS-3D-Fluid-Simulation/blob/master/Assets/FluidSim3D/Shaders/FireRayCast.shader#L154-L156
-            normalizedSmokeTemperature *= 1.0-saturate(density * stepSize * 0.5); //TODO(Tasuku): 0.5 to variable
-
-            if (smokeTransmittanceForSun <= 0.01) break;
-            if (normalizedSmokeTemperature < 0.01) break;
-        } 
+        }
         if (reaction > 0) {
             Ray rayTowardsSunLight;
             rayTowardsSunLight.origin = rayPos;
@@ -295,16 +279,16 @@ float4 volumetricRayMarching(
             float sunLightTransmittanceOnFire = lightmarch(_Reaction, rayTowardsSunLight, boundingBox, _DensityOffset);
             sunLightEnergyOnFire += reaction * stepSize * fireTransmittance * sunLightTransmittanceOnFire * phaseVal;
             fireTransmittance *= exp(-reaction * stepSize * _LightAbsorptionThroughCloud );
-
-            // Temperature(0 ~ 1) for binding temperature with color
-            // Ref. https://github.com/Scrawk/GPU-GEMS-3D-Fluid-Simulation/blob/master/Assets/FluidSim3D/Shaders/FireRayCast.shader#L154-L156
-            normalizedFireTemperature *= 1.0-saturate(reaction * stepSize * 0.5); //TODO(Tasuku): 0.5 to variable
-
-            if (fireTransmittance <= 0.01) break;
-            if (normalizedFireTemperature < 0.01) break;
         }
 
-        dstTravelled += stepSize;
+        // Temperature(0 ~ 1) for binding temperature with color
+        // Ref. https://github.com/Scrawk/GPU-GEMS-3D-Fluid-Simulation/blob/master/Assets/FluidSim3D/Shaders/FireRayCast.shader#L154-L156
+        normalizedSmokeTemperature *= 1.0-saturate(density * stepSize * 1.0); //TODO(Tasuku): 0.5 to variable
+        normalizedFireTemperature *= 1.0-saturate(reaction * stepSize * 1.0); //TODO(Tasuku): 0.5 to variable
+        if (normalizedSmokeTemperature <= 0.01 && normalizedFireTemperature <= 0.01) break;
+        if (smokeTransmittanceForSun <= 0.01 && fireTransmittance <= 0.01) break;
+
+        // dstTravelled += stepSize;
     }
 
 
@@ -321,6 +305,7 @@ float4 volumetricRayMarching(
     //Multiplying emission by density(1 - smokeTransmittanceForSun) makes better fire.
     //Ref. https://youtu.be/Hy4R5Vf-dVM?t=1079
     fireCol = fireCol * _FireIntensity * sunLightEnergyOnFire * (1 - smokeTransmittanceForSun); 
+    //return fireCol;
 
     float4 smoke = SmokeGradient.SampleLevel(samplerSmokeGradient, float2(normalizedSmokeTemperature, 0), 0);
     float4 smokeCol = float4(sunLightEneryOnSmoke * blendLikePaint(mainLightColor.rgb, smoke.rgb), 1.0 - smokeTransmittanceForSun);
@@ -329,8 +314,6 @@ float4 volumetricRayMarching(
     // Load scene color
     #if defined(UNIT_RP__BUILT_IN_RP)
         float4 sceneColor = tex2D(_GrabTexture, screenUV);
-    #elif defined(UNIT_RP__HDRP)
-        float4 sceneColor = float4(SampleCameraColor(screenUV), 1.0);
     #elif defined(UNIT_RP__URP)
         float4 sceneColor = tex2D(_CameraOpaqueTexture, screenUV);
     #endif

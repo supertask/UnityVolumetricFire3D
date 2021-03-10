@@ -1,5 +1,5 @@
-﻿//#define UNIT_RP__URP
-#define UNIT_RP__HDRP
+﻿#define UNIT_RP__URP
+//#define UNIT_RP__HDRP
 #include "./FireRayMarchingCore.hlsl"
 
 void FireRayMarching_float(

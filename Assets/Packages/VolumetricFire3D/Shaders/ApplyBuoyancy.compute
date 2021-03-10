@@ -29,8 +29,12 @@ void CSMain (int3 id : SV_DispatchThreadID)
     float D = _Density[idx];
     float3 V = _Velocity[idx];
     
-    if(T > _AmbientTemperature)
+    if(T > _AmbientTemperature) {
+    	//V += (_DeltaTime * (T - _AmbientTemperature) * _Buoyancy - D * _Weight) * _Up.xyz;
     	V += (_DeltaTime * (T - _AmbientTemperature) * _Buoyancy - D * _Weight) * _Up.xyz;
+
+    	V += (_DeltaTime * (T - _AmbientTemperature) - D * _Weight) * float3(-1.0, 0.0, 0.0);
+    }
     
     _Write[idx] = V;
 }

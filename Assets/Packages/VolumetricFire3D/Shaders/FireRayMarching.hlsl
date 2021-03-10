@@ -8,7 +8,7 @@ v2f vert(VertexInput v)
     #if defined(UNIT_RP__BUILT_IN_RP)
         OUT.positionWS = mul(unity_ObjectToWorld, v.positionOS).xyz; //world space position
         OUT.positionCS = UnityObjectToClipPos(v.positionOS); //clip space position
-    #elif defined(UNIT_RP__HDRP) || defined(UNIT_RP__URP)
+    #elif defined(UNIT_RP__URP)
         OUT.positionWS = TransformObjectToWorld(v.positionOS); //world space position
         OUT.positionCS = TransformWorldToHClip(OUT.positionWS); //clip space position
     #endif
