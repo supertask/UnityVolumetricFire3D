@@ -12,6 +12,8 @@ RWStructuredBuffer<float> _Write;
 StructuredBuffer<Voxel> _VoxelBuffer;
 StructuredBuffer<float> _Read, _Reaction;
 
+bool _IsOn;
+
 
 [numthreads(NUM_THREADS,NUM_THREADS,NUM_THREADS)]
 void GaussImpulse(uint3 id : SV_DispatchThreadID)
@@ -22,7 +24,8 @@ void GaussImpulse(uint3 id : SV_DispatchThreadID)
 	float rad2 = _Radius*_Radius;
 	float gaussDistribution = exp(-mag/rad2);
 
-	float voxelExists = (_VoxelBuffer[idx].fill ? 1.0 : 0.0);
+	Voxel v = _VoxelBuffer[idx];
+	float voxelExists = v.fill ? 1.0 : 0.0;
 	float amount = voxelExists * _Amount * _DeltaTime; //_Amount = reaction/temperature amount
 	//float amount = gaussDistribution * _Amount * _DeltaTime; //_Amount = reaction/temperature amount
 

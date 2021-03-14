@@ -379,7 +379,7 @@ void ResetVoxels(uint3 id : SV_DispatchThreadID)
     Voxel voxel = _VoxelBuffer[vid];
     voxel.position = float3(0,0,0);
     voxel.uv = float2(0, 0);
-    voxel.front = false;
     voxel.fill = false;
+    voxel.front = false;
     _VoxelBuffer[vid] = voxel;
 }

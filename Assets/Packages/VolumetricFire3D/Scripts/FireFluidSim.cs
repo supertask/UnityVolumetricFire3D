@@ -72,6 +72,8 @@ namespace FluidSim3DProject
 		ComputeBuffer[] m_density, m_velocity, m_pressure, m_temperature, m_phi, m_reaction;
 		ComputeBuffer m_temp3f, m_obstacles;
 
+		public bool m_isOn;
+
 		private Mediator mediator; //Knows everything
 
 		static class ShaderIDs
@@ -187,6 +189,7 @@ namespace FluidSim3DProject
 			var extinguishmentKernel = new Kernel(m_applyImpulse, "ExtinguishmentImpluse");
 			foreach (Spawn spawn in this.mediator.spawns) {
 				GPUVoxelData voxelData = spawn.GetGPUVoxelData();
+				m_applyImpulse.SetBool("_IsOn", m_isOn);
 
 				m_applyImpulse.SetVector("_Size", m_size);
 				m_applyImpulse.SetFloat("_Amount", amount);

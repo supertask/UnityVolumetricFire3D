@@ -23,4 +23,5 @@ bool is_empty_voxel(Voxel v)
     return !v.fill;
 }
 
+
 #endif

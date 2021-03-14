@@ -288,9 +288,7 @@ float4 volumetricRayMarching(
         if (normalizedSmokeTemperature <= 0.01 && normalizedFireTemperature <= 0.01) break;
         if (smokeTransmittanceForSun <= 0.01 && fireTransmittance <= 0.01) break;
 
-        // dstTravelled += stepSize;
     }
-
 
     //Debug
     //float fireMap = 1.0-fireTransmittance;
@@ -305,11 +303,9 @@ float4 volumetricRayMarching(
     //Multiplying emission by density(1 - smokeTransmittanceForSun) makes better fire.
     //Ref. https://youtu.be/Hy4R5Vf-dVM?t=1079
     fireCol = fireCol * _FireIntensity * sunLightEnergyOnFire * (1 - smokeTransmittanceForSun); 
-    //return fireCol;
 
     float4 smoke = SmokeGradient.SampleLevel(samplerSmokeGradient, float2(normalizedSmokeTemperature, 0), 0);
     float4 smokeCol = float4(sunLightEneryOnSmoke * blendLikePaint(mainLightColor.rgb, smoke.rgb), 1.0 - smokeTransmittanceForSun);
-
 
     // Load scene color
     #if defined(UNIT_RP__BUILT_IN_RP)
