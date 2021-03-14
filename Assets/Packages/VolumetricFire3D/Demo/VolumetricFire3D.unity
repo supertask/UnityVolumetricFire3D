@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.8267813, g: 0.8368801, b: 0.87688124, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &4
 LightmapSettings:
@@ -901,6 +901,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: fireIntensity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: smokeGradient
       value: 
       objectReference: {fileID: 8400000, guid: 21c908ee3e341d74f9b6fadddb195389, type: 2}
@@ -986,6 +990,94 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
       propertyPath: fireGradient.m_NumColorKeys
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].ctime0
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].ctime1
+      value: 11319
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].ctime2
+      value: 34149
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].ctime3
+      value: 55252
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].ctime4
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].ctime5
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].ctime6
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key0.b
+      value: 0.03137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key0.g
+      value: 0.037252627
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key0.r
+      value: 0.22745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key1.b
+      value: 0.09530634
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key1.g
+      value: 0.07843135
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key1.r
+      value: 0.65882355
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key2.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key2.g
+      value: 0.009792026
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key2.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key3.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key3.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key3.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key4.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].key4.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306561993015533472, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
+      propertyPath: gradients.Array.data[0].m_NumColorKeys
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2501526759576778073, guid: 254356bdfdadcdd4aafdd4454a3d8f02, type: 3}
@@ -1520,6 +1612,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &1803253979

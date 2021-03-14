@@ -386,7 +386,6 @@ Shader "3DFluidSim/FireRayCast"
 						if (normalizedFireTemperature < 0.01) break;
 					}
 
-					dstTravelled += stepSize;
 			    }
 
 				//float4 fireCol = _FireColor;
